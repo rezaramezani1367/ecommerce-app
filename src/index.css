@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-.container-main{
-    @apply container w-5/6 md:w-4/5 lg:w-2/3
+.container-main {
+  @apply container w-5/6 md:w-4/5 lg:w-2/3;
+}
+.btn {
+  @apply px-6 py-2 border rounded-full  bg-green-600 font-bold  hover:bg-green-800
+   text-white hover:shadow-lg transition-all duration-150;
 }
