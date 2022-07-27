@@ -1,23 +1,40 @@
 import React, { useEffect } from "react";
-import { useParams, useLocation ,useNavigate} from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { getProduct } from "../action";
-import { FaEye,FaStar } from "react-icons/fa";
+import { FaEye, FaStar } from "react-icons/fa";
 
 function Product() {
   const { data, loading } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const { id } = useParams();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(getProduct(id));
   }, []);
-  // console.log(data);
-  const CartAddToStorage=()=>{
-    const www=[{product:[...data][0],count:1}];
-    localStorage.setItem('cart',JSON.stringify(www))
-  }
+  const CartAddToStorage = () => {
+    let card = [];
+    let filter = -1;
+    if (localStorage.getItem("cart")) {
+      card = [...JSON.parse(localStorage.getItem("cart"))];
+      card.forEach((item, index) => {
+        if (item.product._id === [...data][0]._id) {
+          filter=index;
+        }
+      });
+      console.log(filter);
+    }
+    // card=filter.length?[...card,{product: [...data][0], count: 2}]:;
+    // if (filter.length) {
+    //   let help = [...card];
+    //   help[0].count += 1;
+    //   card = [...help];
+    // }
+    card = [...card, { product: [...data][0], count: 2 }];
+
+    localStorage.setItem("cart", JSON.stringify(card));
+  };
   if (loading) {
     return <Loading />;
   }
@@ -79,10 +96,19 @@ function Product() {
             </span>
           </li>
           <li className="mt-5">
-           <button className="btn" onClick={()=>{
-            CartAddToStorage();
-            navigate(`/cart`)
-           }}>Add To Card</button>
+            {data[0].countInStock ? (
+              <button
+                className="btn"
+                onClick={() => {
+                  CartAddToStorage();
+                  navigate(`/cart`);
+                }}
+              >
+                Add To Card
+              </button>
+            ) : (
+              <button className="btn">Notify when available</button>
+            )}
           </li>
         </ul>
       </div>

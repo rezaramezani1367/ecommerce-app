@@ -17,12 +17,12 @@ function Home() {
   }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-6 gap-3">
-      {data.map((item) => {
+      {data.map((item,index) => {
         return (
           <div
             className="border rounded-md overflow-hidden cursor-pointer shadow-md"
             onClick={() => {
-              navigate(`/products/${item._id}`, { state: item });
+              navigate(`/products/${item._id}`);
             }}
             key={item._id}
           >
