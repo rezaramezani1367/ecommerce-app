@@ -4,9 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaStar } from "react-icons/fa";
+import Error from "./Error";
 
 function Home() {
-  const { data, loading } = useSelector((state) => state.products);
+  const { data, loading,error } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
@@ -15,14 +16,18 @@ function Home() {
   if (loading) {
     return <Loading />;
   }
+  if (error) {
+    return <Error error={error} />;
+  }
+  
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-6 gap-3">
-      {data.map((item) => {
+      {data.map((item,index) => {
         return (
           <div
             className="border rounded-md overflow-hidden cursor-pointer shadow-md"
             onClick={() => {
-              navigate(`/products/${item._id}`, { state: item });
+              navigate(`/products/${item._id}`);
             }}
             key={item._id}
           >

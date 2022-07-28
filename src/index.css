@@ -6,6 +6,10 @@
   @apply container w-5/6 md:w-4/5 lg:w-2/3;
 }
 .btn {
-  @apply px-6 py-2 border rounded-full  bg-green-600 font-bold  hover:bg-green-800
+  @apply px-8 py-2.5 border rounded-full  bg-green-600 font-bold  hover:bg-green-800
    text-white hover:shadow-lg transition-all duration-150;
+}
+.input{
+  @apply border outline-none w-full rounded-full px-8 py-1.5 
+  shadow-sm  transition-all duration-150 focus:border-blue-700 focus:placeholder:text-blue-700 focus:shadow-md
 }

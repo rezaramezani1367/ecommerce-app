@@ -1,7 +1,7 @@
 import { loadingType, errorType, successType } from "./constans";
 
 export const products = (
-  state = { loading: true, data: [], error: "" },
+  state = { loading: true, data: [],user:{}, error: "" },
   { type, payload }
 ) => {
   switch (type) {

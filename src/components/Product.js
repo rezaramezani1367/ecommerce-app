@@ -1,25 +1,50 @@
 import React, { useEffect } from "react";
-import { useParams, useLocation ,useNavigate} from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { getProduct } from "../action";
-import { FaEye,FaStar } from "react-icons/fa";
+import { FaEye, FaStar } from "react-icons/fa";
+import Error from "./Error";
 
 function Product() {
-  const { data, loading } = useSelector((state) => state.products);
+  const { data, loading,error } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const { id } = useParams();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     dispatch(getProduct(id));
   }, []);
-  // console.log(data);
-  const CartAddToStorage=()=>{
-    const www=[{product:[...data][0],count:1}];
-    localStorage.setItem('cart',JSON.stringify(www))
-  }
+  const CartAddToStorage = () => {
+    let card = [];
+    let duplicateIndex = -1;
+    if (localStorage.getItem("cart")) {
+      card = [...JSON.parse(localStorage.getItem("cart"))];
+      card.forEach((item, index) => {
+        if (item.product._id === [...data][0]._id) {
+          let help = [...card];
+          duplicateIndex = index;
+          help[duplicateIndex].count =
+            help[duplicateIndex].count < [...data][0].countInStock
+              ? help[duplicateIndex].count + 1
+              : [...data][0].countInStock;
+          card = [...help];
+        }
+      });
+    }
+
+    card =
+      duplicateIndex > -1
+        ? [...card]
+        : [...card, { product: [...data][0], count: 1 }];
+
+    localStorage.setItem("cart", JSON.stringify(card));
+  };
   if (loading) {
     return <Loading />;
+  }
+
+  if (error) {
+    return <Error error={error} />;
   }
   return (
     <div className="my-6 grid grid-cols-1 md:grid-cols-2 border p-3 items-center">
@@ -79,10 +104,19 @@ function Product() {
             </span>
           </li>
           <li className="mt-5">
-           <button className="btn" onClick={()=>{
-            CartAddToStorage();
-            navigate(`/cart`)
-           }}>Add To Card</button>
+            {data[0].countInStock ? (
+              <button
+                className="btn"
+                onClick={() => {
+                  CartAddToStorage();
+                  navigate(`/cart`);
+                }}
+              >
+                Add To Card
+              </button>
+            ) : (
+              <button className="btn">Notify when available</button>
+            )}
           </li>
         </ul>
       </div>
