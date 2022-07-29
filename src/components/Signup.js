@@ -74,7 +74,7 @@ function Signup() {
     }
   }, [error, user]);
 
-  const newUser = async () => {
+  const newUser = () => {
     if (checkValidate()) {
       // console.log("first");
       dispatch(createUser(name.value, email.value, password.value));
@@ -87,10 +87,18 @@ function Signup() {
         <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
           Sign up Page
         </div>
-        <form className="p-4" noValidate>
+        <form
+          className="p-4"
+          noValidate
+          onSubmit={(e) => {
+            e.preventDefault();
+            newUser();
+          }}
+        >
           {/* name */}
           <div className="mb-3">
             <input
+              autoFocus
               type="text"
               className={
                 !name.validate && name.start
@@ -294,7 +302,7 @@ function Signup() {
 
           <div className="flex justify-center">
             <button
-              type="button"
+              type="submit"
               className="btn flex gap-2 items-center"
               disabled={loading}
               onClick={newUser}
