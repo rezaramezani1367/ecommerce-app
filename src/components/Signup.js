@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { FaEye, FaStar } from "react-icons/fa";
-import { createUser } from "../action";
-import Loading from "./Loading";
+import { FaSpinner } from "react-icons/fa";
+import { createUser, EmptyUser } from "../action";
 import Swal from "sweetalert2";
 
 function Signup() {
-  const [inputs, setInputs] = useState({
-    name: ["", false],
-    email: ["", false],
-    password: ["", false],
-    repeatPass: ["", false],
-  });
-  const { user, loading, error } = useSelector((state) => state.products);
+  const { user, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  const [inputs, setInputs] = useState({
+    name: { value: "", validate: false, start: false },
+    email: { value: "", validate: false, start: false },
+    password: { value: "", validate: false, start: false },
+    repeatPass: { value: "", validate: false, start: false },
+  });
+  const { name, email, password, repeatPass } = { ...inputs };
   const navigate = useNavigate();
+
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -28,22 +28,59 @@ function Signup() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
-
+  const checkValidate = () => {
+    if (
+      !name.validate ||
+      !email.validate ||
+      !password.validate ||
+      !repeatPass.validate
+    ) {
+      console.log("novalidate");
+      setInputs((last) => {
+        let help = { ...last };
+        if (!password.validate) {
+          help.password = { ...help.password, start: true };
+        }
+        if (!name.validate) {
+          help.name = { ...help.name, start: true };
+        }
+        if (!email.validate) {
+          help.email = { ...help.email, start: true };
+        }
+        if (!repeatPass.validate || repeatPass.value.trim().length == 0) {
+          help.repeatPass = { ...help.repeatPass, start: true };
+        }
+        return { ...help };
+      });
+      return false;
+    }
+    return true;
+  };
   useEffect(() => {
-    // newUser();
-  }, []);
-
-  const newUser = () => {
-    dispatch(createUser("eeeee", "we444we", "wewewe"));
-    console.log(user, error);
-    if (error) {
+    if (error.length) {
       Toast.fire({
         icon: "error",
         title: error,
       });
+      dispatch(EmptyUser());
     }
+    if (Object.keys(user).length) {
+      Toast.fire({
+        icon: "success",
+        title: `${name.value} created successfully`,
+      });
+      dispatch(EmptyUser());
+      navigate("/");
+    }
+  }, [error, user]);
+
+  const newUser = async () => {
+    if (checkValidate()) {
+      // console.log("first");
+      dispatch(createUser(name.value, email.value, password.value));
+    }
+    // console.log(user, error);
   };
-  console.log(inputs);
   return (
     <div className="my-6 grid justify-center">
       <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
@@ -51,97 +88,151 @@ function Signup() {
           Sign up Page
         </div>
         <form className="p-4" noValidate>
+          {/* name */}
           <div className="mb-3">
             <input
               type="text"
               className={
-                inputs.name[1]
-                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
-                  : "input placeholder:text-sm"
+                !name.validate && name.start
+                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500"
+                  : "input placeholder:text-sm "
               }
               placeholder="Name ..."
-              value={inputs.name[0]}
+              value={name.value}
               onChange={(e) => {
+                let value = e.target.value;
                 setInputs((last) => {
-                  return { ...last, name: [e.target.value, false] };
+                  return { ...last, name: { ...name, value: value } };
                 });
               }}
               onBlur={(e) => {
                 let value = e.target.value;
-                if (!value.trim().length) {
-                  setInputs((last) => {
-                    return { ...last, name: [value, true] };
-                  });
-                }
+
+                setInputs((last) => {
+                  return value.trim().length
+                    ? {
+                        ...last,
+                        name: { start: true, value: value, validate: true },
+                      }
+                    : {
+                        ...last,
+                        name: { start: true, value: value, validate: false },
+                      };
+                });
               }}
             />
-            {inputs.name[1] && (
+            {name.start && !name.validate && (
               <p className="text-xs px-3 pt-1 text-red-500">
                 The name field must be filled
               </p>
             )}
           </div>
+          {/* email */}
           <div className="mb-3">
             <input
               type="text"
               className={
-                inputs.email[1]
+                !email.validate && email.start
                   ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
                   : "input placeholder:text-sm"
               }
               placeholder="Email ..."
-              value={inputs.email[0]}
+              value={email.value}
               onChange={(e) => {
+                let value = e.target.value;
                 setInputs((last) => {
-                  return { ...last, email: [e.target.value, false] };
+                  return { ...last, email: { ...email, value: value } };
                 });
               }}
               onBlur={(e) => {
                 let value = e.target.value;
-                // console.log(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value));
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                  setInputs((last) => {
-                    return { ...last, email: [value, true] };
-                  });
-                }
+                setInputs((last) => {
+                  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                    ? {
+                        ...last,
+                        email: { start: true, value: value, validate: true },
+                      }
+                    : {
+                        ...last,
+                        email: { start: true, value: value, validate: false },
+                      };
+                });
               }}
             />
-            {inputs.email[1] && (
+            {!email.validate && email.start && (
               <p className="text-xs px-3 pt-1 text-red-500">
                 The email field is invalid
               </p>
             )}
           </div>
+
+          {/* password */}
           <div className="mb-3">
             <input
               type="password"
               className={
-                inputs.password[1]
+                !password.validate && password.start
                   ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
                   : "input placeholder:text-sm"
               }
               placeholder="Password ..."
-              value={inputs.password[0]}
+              value={password.name}
               onChange={(e) => {
+                let value = e.target.value;
                 setInputs((last) => {
-                  return { ...last, password: [e.target.value, false] };
+                  return { ...last, password: { ...password, value: value } };
                 });
               }}
               onBlur={(e) => {
                 let value = e.target.value;
-                
-                if (
-                  !/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                    value
-                  )
-                ) {
-                  setInputs((last) => {
-                    return { ...last, password: [value, true] };
-                  });
-                }
+
+                setInputs((last) => {
+                  if (
+                    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+                      value
+                    )
+                  ) {
+                    return repeatPass.value === value
+                      ? {
+                          ...last,
+                          password: {
+                            start: true,
+                            value: value,
+                            validate: true,
+                          },
+                          repeatPass: {
+                            ...repeatPass,
+                            start: true,
+                            validate: true,
+                          },
+                        }
+                      : {
+                          ...last,
+                          password: {
+                            start: true,
+                            value: value,
+                            validate: true,
+                          },
+                          repeatPass: {
+                            ...repeatPass,
+                            start: true,
+                            validate: false,
+                          },
+                        };
+                  } else {
+                    return {
+                      ...last,
+                      password: {
+                        start: true,
+                        value: value,
+                        validate: false,
+                      },
+                    };
+                  }
+                });
               }}
             />
-            {inputs.password[1] && (
+            {!password.validate && password.start && (
               <p className="text-xs px-3 pt-1 text-red-500">
                 The password field has Minimum 8 characters, at least one
                 uppercase letter, one lowercase letter, one number and one
@@ -149,24 +240,68 @@ function Signup() {
               </p>
             )}
           </div>
+
+          {/* repeat password */}
           <div className="mb-4">
             <input
               type="password"
               className={
-                inputs.repeatPass[1]
+                !repeatPass.validate && repeatPass.start
                   ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
                   : "input placeholder:text-sm"
               }
               placeholder="Repeat Password ..."
+              value={inputs.repeatPass[0]}
+              onChange={(e) => {
+                let value = e.target.value;
+                setInputs((last) => {
+                  return {
+                    ...last,
+                    repeatPass: { ...repeatPass, value: value },
+                  };
+                });
+              }}
+              onBlur={(e) => {
+                let value = e.target.value;
+
+                setInputs((last) => {
+                  return value === password.value
+                    ? {
+                        ...last,
+                        repeatPass: {
+                          start: true,
+                          value: value,
+                          validate: true,
+                        },
+                      }
+                    : {
+                        ...last,
+                        repeatPass: {
+                          start: true,
+                          value: value,
+                          validate: false,
+                        },
+                      };
+                });
+              }}
             />
-            {inputs.repeatPass[1] && (
+            {!repeatPass.validate && repeatPass.start && (
               <p className="text-xs px-3 pt-1 text-red-500">
                 It must be the same as the password field
               </p>
             )}
           </div>
+
           <div className="flex justify-center">
-            <button type="button" className="btn" onClick={newUser}>
+            <button
+              type="button"
+              className="btn flex gap-2 items-center"
+              disabled={loading}
+              onClick={newUser}
+            >
+              <FaSpinner
+                className={loading ? "block animate-spin" : "hidden"}
+              />
               Sign up
             </button>
           </div>

@@ -1,7 +1,14 @@
-import { loadingType, errorType, successType } from "./constans";
+import {
+  loadingType,
+  errorType,
+  successType,
+  loadingUser,
+  successUser,
+  errorUser,
+} from "./constans";
 
 export const products = (
-  state = { loading: true, data: [],user:{}, error: "" },
+  state = { loading: false, data: [], error: "" },
   { type, payload }
 ) => {
   switch (type) {
@@ -10,6 +17,22 @@ export const products = (
     case successType:
       return payload;
     case errorType:
+      return payload;
+
+    default:
+      return state;
+  }
+};
+export const user = (
+  state = { loading: false, user: {}, error: "" },
+  { type, payload }
+) => {
+  switch (type) {
+    case loadingUser:
+      return payload;
+    case successUser:
+      return payload;
+    case errorUser:
       return payload;
 
     default:

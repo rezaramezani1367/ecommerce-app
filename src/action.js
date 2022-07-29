@@ -1,5 +1,13 @@
 import axios from "axios";
-import { loadingType, errorType, successType, IpApi } from "./constans";
+import {
+  loadingType,
+  errorType,
+  successType,
+  IpApi,
+  loadingUser,
+  successUser,
+  errorUser,
+} from "./constans";
 
 export const getProducts = () => async (dispatch, getState) => {
   dispatch({
@@ -9,12 +17,12 @@ export const getProducts = () => async (dispatch, getState) => {
   try {
     const { data } = await axios(`${IpApi}/api/products`);
     dispatch({
-      type: loadingType,
+      type: successType,
       payload: { data: [...data], loading: false, error: "" },
     });
   } catch (error) {
     dispatch({
-      type: loadingType,
+      type: errorType,
       payload: { data: [], error: error.message, loading: false },
     });
   }
@@ -28,12 +36,12 @@ export const getProduct = (id) => async (dispatch, getState) => {
     const { data } = await axios(`${IpApi}/api/products/${id}`);
 
     dispatch({
-      type: loadingType,
+      type: successType,
       payload: { data: [{ ...data }], loading: false, error: "" },
     });
   } catch (error) {
     dispatch({
-      type: loadingType,
+      type: errorType,
       payload: { data: [], error: error.message, loading: false },
     });
   }
@@ -41,37 +49,45 @@ export const getProduct = (id) => async (dispatch, getState) => {
 export const createUser =
   (name, email, password) => async (dispatch, getState) => {
     dispatch({
-      type: loadingType,
-      payload: { ...getState().products, loading: true, user: {} },
+      type: loadingUser,
+      payload: { ...getState().user, loading: true },
     });
     try {
-      const { data } = name.length
-        ? await axios.post(`${IpApi}/api/users`, {
-            name,
-            password,
-            email,
-          })
-        : {};
+      const { data } = await axios.post(`${IpApi}/api/users`, {
+        name,
+        password,
+        email,
+      });
 
       dispatch({
-        type: loadingType,
+        type: successUser,
         payload: {
-          ...getState().products,
+          error: "",
           loading: false,
-          user: data,
+          user: {...data},
         },
       });
-      console.log(data);
+      console.log(getState().user);
       localStorage.setItem("user", JSON.stringify(data));
     } catch ({ response: { data } }) {
       dispatch({
-        type: loadingType,
+        type: errorUser,
         payload: {
-          ...getState().products,
           error: data.message,
           loading: false,
           user: {},
         },
       });
     }
+    console.log(getState().user);
   };
+export const EmptyUser = () => async (dispatch, getState) => {
+  dispatch({
+    type: successUser,
+    payload: {
+      error: "",
+      loading: false,
+      user: {},
+    },
+  });
+};

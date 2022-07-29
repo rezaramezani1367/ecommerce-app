@@ -4,10 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { getProduct } from "../action";
 import { FaEye, FaStar } from "react-icons/fa";
-<<<<<<< HEAD
 import Error from "./Error";
-=======
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
 
 function Product() {
   const { data, loading,error } = useSelector((state) => state.products);
@@ -19,16 +16,11 @@ function Product() {
   }, []);
   const CartAddToStorage = () => {
     let card = [];
-<<<<<<< HEAD
     let duplicateIndex = -1;
-=======
-    let filter = -1;
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
     if (localStorage.getItem("cart")) {
       card = [...JSON.parse(localStorage.getItem("cart"))];
       card.forEach((item, index) => {
         if (item.product._id === [...data][0]._id) {
-<<<<<<< HEAD
           let help = [...card];
           duplicateIndex = index;
           help[duplicateIndex].count =
@@ -44,20 +36,6 @@ function Product() {
       duplicateIndex > -1
         ? [...card]
         : [...card, { product: [...data][0], count: 1 }];
-=======
-          filter=index;
-        }
-      });
-      console.log(filter);
-    }
-    // card=filter.length?[...card,{product: [...data][0], count: 2}]:;
-    // if (filter.length) {
-    //   let help = [...card];
-    //   help[0].count += 1;
-    //   card = [...help];
-    // }
-    card = [...card, { product: [...data][0], count: 2 }];
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
 
     localStorage.setItem("cart", JSON.stringify(card));
   };

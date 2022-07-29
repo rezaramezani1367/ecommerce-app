@@ -6,9 +6,6 @@ import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {
-<<<<<<< HEAD
-
-
   const [getCart, setGetCart] = useState([]);
   const [counter, setCounter] = useState([]);
   const [totolPrice, setTotolPrice] = useState(0);
@@ -79,19 +76,6 @@ function Cart() {
     });
   };
 
- 
-=======
-  const { data, loading } = useSelector((state) => state.products);
-  const [getCart, setGetCart] = useState([]);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  useEffect(() => {
-    // dispatch(getProducts());
-    setGetCart(JSON.parse(localStorage.getItem("cart")));
-  }, []);
-  // console.log(getCart)
-
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
   if (!localStorage.getItem("cart")) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -101,22 +85,29 @@ function Cart() {
   }
   return (
     <div className="my-6">
-<<<<<<< HEAD
       {getCart.map((item, index) => {
-=======
-      {getCart.map((item) => {
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
         const { product, count } = item;
         return (
           <div
             className="border grid grid-cols-11 items-center gap-2 my-2 shadow"
             key={product._id}
           >
-            <div className="col-span-1">
-<<<<<<< HEAD
+            <div
+              className="col-span-1 hover:cursor-pointer transition-all"
+              onClick={() => {
+                navigate(`/products/${product._id}`);
+              }}
+            >
               <img src={product.image} alt={product.name} />
             </div>
-            <div className="font-bold col-span-3">{product.name}</div>
+            <div
+              className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all"
+              onClick={() => {
+                navigate(`/products/${product._id}`);
+              }}
+            >
+              {product.name}
+            </div>
             <div className="text-center col-span-2">
               <span className="font-bold ">{product.price.toFixed(2)}$</span>
             </div>
@@ -145,33 +136,11 @@ function Cart() {
              transition-all cursor-pointer"
               onClick={() => removeItem(index)}
             >
-=======
-              <img src={product.image} className="" alt={product.name} />
-            </div>
-            <div className="font-bold col-span-3">{product.name}</div>
-            <div className="text-center col-span-2">
-              <span className="font-bold ">{product.price}$</span>
-            </div>
-            <div className="border flex items-center gap-1 md:gap-2 lg:gap-7 justify-center shadow-sm col-span-2">
-              <div className=" cursor-pointer text-sm text-red-600">
-                <FaMinus className="" />
-              </div>
-              <span className="font-bold text-xl">{count}</span>
-              <div className=" cursor-pointer text-sm text-green-600">
-                <FaPlus className="" />
-              </div>
-            </div>
-            <div className="text-center col-span-2">
-              <span className="font-bold">Total: {product.price*count}$</span>
-            </div>
-            <div className="flex justify-center text-red-500 hover:text-red-700 transition-all cursor-pointer">
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
               <FaRegTimesCircle />
             </div>
           </div>
         );
       })}
-<<<<<<< HEAD
       <div className="flex justify-end ">
         <div className="w-80 grid grid-cols-3 gap-2 border shadow-sm">
           <div className="text-slate-500 bg-slate-100 p-2 font-bold">
@@ -182,10 +151,15 @@ function Cart() {
           </div>
         </div>
       </div>
-=======
->>>>>>> 078e0f700d9d9c8d3b2b56bd072fed2ccaffc05c
       <div className="flex justify-center">
-        <button className="btn mt-6" onClick={()=>{navigate('/login')}}>Next</button>
+        <button
+          className="btn mt-6"
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
