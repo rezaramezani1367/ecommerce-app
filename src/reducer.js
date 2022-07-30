@@ -5,10 +5,11 @@ import {
   loadingUser,
   successUser,
   errorUser,
+
 } from "./constans";
 
 export const products = (
-  state = { loading: false, data: [], error: "" },
+  state = { loading: true, data: [], error: "" },
   { type, payload }
 ) => {
   switch (type) {

@@ -54,7 +54,7 @@ function Login() {
     if (Object.keys(user).length) {
       Toast.fire({
         icon: "success",
-        title: `${email.value} login successfully`,
+        title: `${user.name} login successfully`,
       });
       dispatch(EmptyUser());
       navigate("/");
@@ -63,12 +63,8 @@ function Login() {
 
   const login = () => {
     if (checkValidate()) {
-      const userInfo = JSON.parse(localStorage.getItem("user"));
-
-      console.log(userInfo);
-      dispatch(loginUser(email.value, password.value, userInfo.token));
+      dispatch(loginUser(email.value, password.value));
     }
-    console.log(user, error);
   };
   return (
     <div className="my-6 grid justify-center">
@@ -76,19 +72,19 @@ function Login() {
         <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
           Login Page
         </div>
-        <form 
+        <form
           className="p-4"
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            console.log("first")
-            login()
+            console.log("first");
+            login();
           }}
         >
           {/* email */}
           <div className="mb-3">
             <input
-            autoFocus
+              autoFocus
               type="text"
               className={
                 !email.validate && email.start
@@ -127,7 +123,7 @@ function Login() {
 
           {/* password */}
           <div className="mb-3">
-            <input 
+            <input
               type="password"
               className={
                 !password.validate && password.start
@@ -176,6 +172,7 @@ function Login() {
               </p>
             )}
           </div>
+          
 
           <div className="flex justify-center">
             <button

@@ -14,6 +14,7 @@ function Product() {
   useEffect(() => {
     dispatch(getProduct(id));
   }, []);
+  
   const CartAddToStorage = () => {
     let card = [];
     let duplicateIndex = -1;

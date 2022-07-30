@@ -67,7 +67,6 @@ export const createUser =
           user: { ...data },
         },
       });
-      console.log(getState().user);
       localStorage.setItem("user", JSON.stringify(data));
     } catch ({ response: { data } }) {
       dispatch({
@@ -79,7 +78,6 @@ export const createUser =
         },
       });
     }
-    console.log(getState().user);
   };
 export const EmptyUser = () => async (dispatch, getState) => {
   dispatch({
@@ -91,7 +89,7 @@ export const EmptyUser = () => async (dispatch, getState) => {
     },
   });
 };
-export const loginUser = (email, password,token) => async (dispatch, getState) => {
+export const loginUser = (email, password) => async (dispatch, getState) => {
   dispatch({
     type: loadingUser,
     payload: { ...getState().user, loading: true },
@@ -100,10 +98,7 @@ export const loginUser = (email, password,token) => async (dispatch, getState) =
     const { data } = await axios.post(`${IpApi}/api/users/login `, {
       password,
       email,
-    },{headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    }});
+    });
 
     dispatch({
       type: successUser,
@@ -113,7 +108,6 @@ export const loginUser = (email, password,token) => async (dispatch, getState) =
         user: { ...data },
       },
     });
-    console.log(getState().user);
     localStorage.setItem("user", JSON.stringify(data));
   } catch ({ response: { data } }) {
     dispatch({
@@ -125,5 +119,72 @@ export const loginUser = (email, password,token) => async (dispatch, getState) =
       },
     });
   }
-  console.log(getState().user);
 };
+export const getProfile = (token) => async (dispatch, getState) => {
+  dispatch({
+    type: loadingUser,
+    payload: { ...getState().user, loading: true },
+  });
+  try {
+    const { data } = await axios.get(`${IpApi}/api/users/profile`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch({
+      type: successUser,
+      payload: {
+        error: "",
+        loading: false,
+        user: { ...data },
+      },
+    });
+  } catch ({ response: { data } }) {
+    dispatch({
+      type: errorUser,
+      payload: {
+        error: data.message,
+        loading: false,
+        user: {},
+      },
+    });
+  }
+};
+export const changeProfile =
+  (name, email, password,token) => async (dispatch, getState) => {
+    dispatch({
+      type: loadingUser,
+      payload: { ...getState().user, loading: true },
+    });
+    try {
+      const { data } = await axios.put(`${IpApi}/api/users/profile `, {
+        name,
+        email,
+        password,
+      },{headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      }});
+
+      dispatch({
+        type: successUser,
+        payload: {
+          error: "",
+          loading: false,
+          user: { ...data },
+        },
+      });
+      localStorage.setItem("user", JSON.stringify(data));
+    } catch ({ response: { data } }) {
+      dispatch({
+        type: errorUser,
+        payload: {
+          error: data.message,
+          loading: false,
+          user: {},
+        },
+      });
+    }
+  };
