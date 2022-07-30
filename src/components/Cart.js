@@ -4,6 +4,7 @@ import {} from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function Cart() {
   const [getCart, setGetCart] = useState([]);
@@ -11,6 +12,17 @@ function Cart() {
   const [totolPrice, setTotolPrice] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
   useEffect(() => {
     if (localStorage.getItem("cart")) {
       JSON.parse(localStorage.getItem("cart")).forEach(({ count }) => {
@@ -155,7 +167,25 @@ function Cart() {
         <button
           className="btn mt-6"
           onClick={() => {
-            navigate("/login");
+            if (!localStorage.getItem("user")) {
+              Toast.fire({
+                icon: "success",
+                title: `please Login`
+              })
+             
+              navigate("/login");
+            }
+           else if (!localStorage.getItem("address")) {
+              Toast.fire({
+                icon: "success",
+                title: `Please complete the address form`
+              })
+             
+              navigate("/address");
+            }else{
+
+              navigate("/checkout");
+            }
           }}
         >
           Next

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
 import { loginUser, EmptyUser } from "../action";
@@ -66,6 +66,17 @@ function Login() {
       dispatch(loginUser(email.value, password.value));
     }
   };
+  if (localStorage.getItem("user")) {
+    Toast.fire({
+      icon: "success",
+      title: `User loged in`,
+    });
+    return (
+      <>
+        <Navigate replace to="/" />
+      </>
+    );
+  }
   return (
     <div className="my-6 grid justify-center">
       <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">

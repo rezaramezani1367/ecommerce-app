@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
 import { createUser, EmptyUser } from "../action";
@@ -76,11 +76,20 @@ function Signup() {
 
   const newUser = () => {
     if (checkValidate()) {
-      // console.log("first");
       dispatch(createUser(name.value, email.value, password.value));
     }
-    // console.log(user, error);
   };
+  if (localStorage.getItem("user")) {
+    Toast.fire({
+      icon: "success",
+      title: `User sign up`,
+    });
+    return (
+      <>
+        <Navigate replace to="/" />
+      </>
+    );
+  }
   return (
     <div className="my-6 grid justify-center">
       <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">

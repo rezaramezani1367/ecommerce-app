@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { FaSpinner } from "react-icons/fa";
-import { createUser, EmptyUser } from "../action";
+import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Address() {
-  const { user, loading, error } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     address: { value: "", validate: false, start: false },
     city: { value: "", validate: false, start: false },
@@ -28,6 +23,9 @@ function Address() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
+
+
+  
   const checkValidate = () => {
     if (
       !address.validate ||
@@ -55,31 +53,35 @@ function Address() {
     }
     return true;
   };
-  useEffect(() => {
-    if (error.length) {
-      Toast.fire({
-        icon: "error",
-        title: error,
-      });
-      dispatch(EmptyUser());
-    }
-    if (Object.keys(user).length) {
+
+  const saveAddressToLS = () => {
+    if (checkValidate()) {
+      localStorage.setItem(
+        "address",
+        JSON.stringify({
+          address: address.value,
+          city: city.value,
+          postalCode: postalCode.value,
+          phone: phone.value,
+        })
+      );
       Toast.fire({
         icon: "success",
-        title: `${address.value} created successfully`,
+        title: `Address created successfully`,
       });
-      dispatch(EmptyUser());
       navigate("/");
     }
-  }, [error, user]);
-
-  const newUser = () => {
-    if (checkValidate()) {
-      // console.log("first");
-    //   dispatch(createUser(name.value, email.value, password.value));
-    }
-    // console.log(user, error);
   };
+  if(localStorage.getItem("address")){
+    Toast.fire({
+      icon: "success",
+      title: `Address exists`,
+    });
+    return <>
+    <Navigate replace to="/" />
+    </>
+  }
+ 
   return (
     <div className="my-6 grid justify-center">
       <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
@@ -91,7 +93,7 @@ function Address() {
           noValidate
           onSubmit={(e) => {
             e.preventDefault();
-            newUser();
+            saveAddressToLS();
           }}
         >
           {/* Address */}
@@ -134,18 +136,141 @@ function Address() {
               </p>
             )}
           </div>
+          {/* city */}
+          <div className="mb-3">
+            <input
+              type="text"
+              className={
+                !city.validate && city.start
+                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500"
+                  : "input placeholder:text-sm "
+              }
+              placeholder="City ..."
+              value={city.value}
+              onChange={(e) => {
+                let value = e.target.value;
+                setInputs((last) => {
+                  return { ...last, city: { ...city, value: value } };
+                });
+              }}
+              onBlur={(e) => {
+                let value = e.target.value;
 
+                setInputs((last) => {
+                  return value.trim().length
+                    ? {
+                        ...last,
+                        city: { start: true, value: value, validate: true },
+                      }
+                    : {
+                        ...last,
+                        city: { start: true, value: value, validate: false },
+                      };
+                });
+              }}
+            />
+            {city.start && !city.validate && (
+              <p className="text-xs px-3 pt-1 text-red-500">
+                The city field must be filled
+              </p>
+            )}
+          </div>
+          {/* postalCode */}
+          <div className="mb-3">
+            <input
+              type="text"
+              className={
+                !postalCode.validate && postalCode.start
+                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500"
+                  : "input placeholder:text-sm "
+              }
+              placeholder="Postal Code ..."
+              value={postalCode.value}
+              onChange={(e) => {
+                let value = e.target.value;
+                setInputs((last) => {
+                  return {
+                    ...last,
+                    postalCode: { ...postalCode, value: value },
+                  };
+                });
+              }}
+              onBlur={(e) => {
+                let value = e.target.value;
+
+                setInputs((last) => {
+                  return value.trim().length
+                    ? {
+                        ...last,
+                        postalCode: {
+                          start: true,
+                          value: value,
+                          validate: true,
+                        },
+                      }
+                    : {
+                        ...last,
+                        postalCode: {
+                          start: true,
+                          value: value,
+                          validate: false,
+                        },
+                      };
+                });
+              }}
+            />
+            {postalCode.start && !postalCode.validate && (
+              <p className="text-xs px-3 pt-1 text-red-500">
+                The postalCode field must be filled
+              </p>
+            )}
+          </div>
+          {/* phone */}
+          <div className="mb-3">
+            <input
+              type="text"
+              className={
+                !phone.validate && phone.start
+                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500"
+                  : "input placeholder:text-sm "
+              }
+              placeholder="Phone ..."
+              value={phone.value}
+              onChange={(e) => {
+                let value = e.target.value;
+                setInputs((last) => {
+                  return { ...last, phone: { ...phone, value: value } };
+                });
+              }}
+              onBlur={(e) => {
+                let value = e.target.value;
+
+                setInputs((last) => {
+                  return value.trim().length
+                    ? {
+                        ...last,
+                        phone: { start: true, value: value, validate: true },
+                      }
+                    : {
+                        ...last,
+                        phone: { start: true, value: value, validate: false },
+                      };
+                });
+              }}
+            />
+            {phone.start && !phone.validate && (
+              <p className="text-xs px-3 pt-1 text-red-500">
+                The phone field must be filled
+              </p>
+            )}
+          </div>
 
           <div className="flex justify-center">
             <button
               type="submit"
               className="btn flex gap-2 items-center"
-              disabled={loading}
-              onClick={newUser}
+              onClick={saveAddressToLS}
             >
-              <FaSpinner
-                className={loading ? "block animate-spin" : "hidden"}
-              />
               Next
             </button>
           </div>
