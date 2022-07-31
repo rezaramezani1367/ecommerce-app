@@ -12,6 +12,7 @@ function Product() {
   const { id } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
+    document.title=`Product`
     dispatch(getProduct(id));
   }, []);
   

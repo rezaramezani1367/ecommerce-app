@@ -31,7 +31,6 @@ function Header() {
     );
   }, [user]);
 
-  console.log(profile);
   return (
     <div className="border-b shadow py-2.5">
       <div className="container-main flex justify-between  items-center">
@@ -57,7 +56,7 @@ function Header() {
                         <Link to="/setting">Setting</Link>
                       </li>
                       <li className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150">
-                        Orders
+                        <Link to="/orders">Orders</Link>
                       </li>
                       <li
                         className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150"
@@ -82,7 +81,9 @@ function Header() {
             </li>
 
             <li className="font-bold cursor-pointer">
-              <FaShoppingCart />
+              <Link to="/cart">
+                <FaShoppingCart />
+              </Link>
             </li>
           </ul>
         </div>

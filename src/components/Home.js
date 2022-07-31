@@ -11,6 +11,7 @@ function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
+    document.title="home"
     dispatch(getProducts());
   }, []);
   if (loading) {

@@ -5,6 +5,8 @@ import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import Order from "./components/Order";
+import Orders from "./components/Orders";
 import Product from "./components/Product";
 import Setting from "./components/Setting";
 import Signup from "./components/Signup";
@@ -19,9 +21,13 @@ function Routers() {
       <Route path="/cart" element={<Cart />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/setting" element={<Setting/>} />
-      <Route path="/address" element={<Address/>} />
-      <Route path="/checkout" element={<Checkout/>} />
+      <Route path="/setting" element={<Setting />} />
+      <Route path="/address" element={<Address />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/orders">
+        <Route index element={<Orders />} />
+        <Route path=":id" element={<Order />} />
+      </Route>
     </Routes>
   );
 }

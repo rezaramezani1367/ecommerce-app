@@ -4,11 +4,11 @@ import {
   combineReducers,
 } from "redux";
 import thunk from "redux-thunk";
-import {products,user} from './reducer'
+import {products,user,orders} from './reducer'
 
 const initialState = {};
 const middleWare = [thunk];
-const reducers = combineReducers({products,user});
+const reducers = combineReducers({products,user,orders});
 const store = creatStore(
   reducers,
   initialState,

@@ -69,16 +69,18 @@ function Address() {
         icon: "success",
         title: `Address created successfully`,
       });
-      navigate("/");
+      navigate("/checkout");
     }
   };
+
+  
   if(localStorage.getItem("address")){
     Toast.fire({
       icon: "success",
       title: `Address exists`,
     });
     return <>
-    <Navigate replace to="/" />
+    <Navigate replace to="/checkout" />
     </>
   }
  

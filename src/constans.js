@@ -5,3 +5,6 @@ export const successType="successType";
 export const loadingUser="loadingUser";
 export const errorUser="errorUser";
 export const successUser="successUser";
+export const loadingOrders="loadingOrders";
+export const errorOrders="errorOrders";
+export const successOrders="successOrders";

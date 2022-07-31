@@ -5,6 +5,9 @@ import {
   loadingUser,
   successUser,
   errorUser,
+  loadingOrders,
+  successOrders,
+  errorOrders,
 
 } from "./constans";
 
@@ -34,6 +37,22 @@ export const user = (
     case successUser:
       return payload;
     case errorUser:
+      return payload;
+
+    default:
+      return state;
+  }
+};
+export const orders = (
+  state = { loading: false, orders: {}, error: "" },
+  { type, payload }
+) => {
+  switch (type) {
+    case loadingOrders:
+      return payload;
+    case successOrders:
+      return payload;
+    case errorOrders:
       return payload;
 
     default:

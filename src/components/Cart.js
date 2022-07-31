@@ -91,7 +91,7 @@ function Cart() {
   if (!localStorage.getItem("cart")) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="font-bold text-2xl">The shopping cart is empty</div>
+        <div className="font-bold text-2xl text-red-500">The shopping cart is empty</div>
       </div>
     );
   }
@@ -169,7 +169,7 @@ function Cart() {
           onClick={() => {
             if (!localStorage.getItem("user")) {
               Toast.fire({
-                icon: "success",
+                icon: "warning",
                 title: `please Login`
               })
              
@@ -177,7 +177,7 @@ function Cart() {
             }
            else if (!localStorage.getItem("address")) {
               Toast.fire({
-                icon: "success",
+                icon: "warning",
                 title: `Please complete the address form`
               })
              
