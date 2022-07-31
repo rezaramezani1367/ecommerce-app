@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus, FaRegTimesCircle } from "react-icons/fa";
-import { getMyOrders, setOrders } from "../action";
+import React, { useEffect } from "react";
+import { getMyOrders } from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import Error from "./Error";
@@ -85,7 +84,7 @@ function Orders() {
                 }}
               >
                 <div>{index + 1}</div>
-                <div className="col-span-2">{item.orderItems.length}</div>
+                <div className="col-span-2">{item.orderItems?.length}</div>
                 <div className="text-red-500 col-span-2">
                   {item.totalPrice}$
                 </div>
@@ -94,8 +93,8 @@ function Orders() {
                   {item.isDelivered ? "Yes" : "No"}
                 </div>
                 <div className="col-span-2">
-                  {" "}
-                  {item.createdAt.substring(0, 10)}
+                 
+                  {item.createdAt?.substring(0, 10)}
                 </div>
               </div>
             );

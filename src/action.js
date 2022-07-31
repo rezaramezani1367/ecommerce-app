@@ -241,10 +241,43 @@ export const setOrders = (orders, token) => async (dispatch, getState) => {
 export const getMyOrders = (token) => async (dispatch, getState) => {
   dispatch({
     type: loadingOrders,
-    payload: { ...getState().orders, loading: true },
+    payload: { error: "",orders:{}, loading: true },
   });
   try {
     const { data } = await axios.get(`${IpApi}/api/orders/myorders`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch({
+      type: successOrders,
+      payload: {
+        error: "",
+        loading: false,
+        orders: { ...data },
+      },
+    });
+
+  } catch ({ response: { data } }) {
+    dispatch({
+      type: errorOrders,
+      payload: {
+        error: data.message,
+        loading: false,
+        orders: {},
+      },
+    });
+  }
+};
+export const getDetailsOrder = (id,token) => async (dispatch, getState) => {
+  dispatch({
+    type: loadingOrders,
+    payload: { ...getState().orders,orders:{}, loading: true },
+  });
+  try {
+    const { data } = await axios.get(`${IpApi}/api/orders/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

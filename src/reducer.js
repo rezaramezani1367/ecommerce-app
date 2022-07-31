@@ -12,7 +12,7 @@ import {
 } from "./constans";
 
 export const products = (
-  state = { loading: true, data: [], error: "" },
+  state = { loading: false, data: [], error: "" },
   { type, payload }
 ) => {
   switch (type) {

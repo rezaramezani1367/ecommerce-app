@@ -76,6 +76,7 @@ function Checkout() {
     };
     dispatch(setOrders({ ...ordersList }, userLs.token));
   };
+
   if (!localStorage.getItem("user")) {
     Toast.fire({
       icon: "info",
