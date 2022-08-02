@@ -8,7 +8,9 @@ import {
   loadingOrders,
   successOrders,
   errorOrders,
-
+  loadingCart,
+  errorCart,
+  successCart,
 } from "./constans";
 
 export const products = (
@@ -53,6 +55,26 @@ export const orders = (
     case successOrders:
       return payload;
     case errorOrders:
+      return payload;
+
+    default:
+      return state;
+  }
+};
+export const cart = (
+  state = {
+    loading: false,
+    data:[],
+    error: "",
+  },
+  { type, payload }
+) => {
+  switch (type) {
+    case loadingCart:
+      return payload;
+    case successCart:
+      return payload;
+    case errorCart:
       return payload;
 
     default:

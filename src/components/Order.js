@@ -33,7 +33,7 @@ function Order() {
   }, []);
 
   switch (true) {
-    case !localStorage.getItem("user"):
+    case Boolean(!localStorage.getItem("user")):
       Toast.fire({
         icon: "info",
         title: `Please Login`,
@@ -49,13 +49,13 @@ function Order() {
           <Loading />
         </>
       );
-    case error:
+    case Boolean(error):
       return (
         <>
           <Error error={error} />
         </>
       );
-    case !Object.values(orders).length:
+    case Boolean(!Object.values(orders).length):
       return (
         <div className="flex justify-center items-center h-96">
           <div className="font-bold text-2xl text-red-500">

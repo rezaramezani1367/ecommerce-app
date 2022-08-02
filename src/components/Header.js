@@ -3,14 +3,15 @@ import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { EmptyUser } from "../action";
+import { exitUser } from "../action";
 
 function Header() {
-  const { user } = useSelector((state) => state.user);
+  const { user:{user},cart:{data}} = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [profile, setProfile] = useState({});
   const [flagUser, setFlagUser] = useState(false);
+  const [countCart, setCountCart] = useState(0)
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -22,8 +23,19 @@ function Header() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
+  useEffect(() => {
+    let totalCount=0;
+    console.log(data)
+    data.forEach(({count})=>{
+      totalCount +=count;
+    })
+  //  console.log(data)
+   setCountCart(totalCount);
+  }, [data])
+  
 
   useEffect(() => {
+    console.log(user)
     setProfile(
       localStorage.getItem("user")
         ? JSON.parse(localStorage.getItem("user"))
@@ -33,13 +45,13 @@ function Header() {
 
   return (
     <div className="border-b shadow py-2.5">
-      <div className="container-main flex justify-between  items-center">
+      <div className="container-main flex justify-between text-xl  items-center">
         <div className=" cursor-pointer font-bold hover:text-blue-800 transition-all">
           <Link to="/">Home</Link>
         </div>
         <div>
-          <ul className="flex flex-row-reverse items-center">
-            <li className="ml-6 font-bold ">
+          <ul className="flex flex-row-reverse items-center gap-12">
+            <li className="font-bold ">
               {Object.keys(profile).length ? (
                 <div className="relative">
                   <div
@@ -51,7 +63,7 @@ function Header() {
                     <FaUser />
                   </div>
                   {flagUser && (
-                    <ul className="absolute top-6 right-0 z-50 border border-slate-300 shadow-lg opacity-95 bg-white py-2 pl-2 pr-6 rounded-md">
+                    <ul className="absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white py-2 pl-2 pr-6 rounded-md">
                       <li className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150">
                         <Link to="/setting">Setting</Link>
                       </li>
@@ -61,8 +73,7 @@ function Header() {
                       <li
                         className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150"
                         onClick={() => {
-                          dispatch(EmptyUser());
-                          localStorage.removeItem("user");
+                          dispatch(exitUser());
                           Toast.fire({
                             icon: "success",
                             title: `User loged out`,
@@ -80,10 +91,22 @@ function Header() {
               )}
             </li>
 
-            <li className="font-bold cursor-pointer">
-              <Link to="/cart">
-                <FaShoppingCart />
-              </Link>
+            <li
+              className="font-bold cursor-pointer relative"
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
+              <FaShoppingCart />
+
+              <p
+                className="px-1.5 py-0.5 text-xs bg-red-600 text-white  rounded-2xl absolute top-2 left-3 opacity-90"
+                onClick={() => {
+                  navigate("/cart");
+                }}
+              >
+               {countCart}
+              </p>
             </li>
           </ul>
         </div>
@@ -92,4 +115,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default React.memo(Header);

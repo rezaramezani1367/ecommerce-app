@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus, FaRegTimesCircle } from "react-icons/fa";
+import {  FaSpinner } from "react-icons/fa";
 import { setOrders } from "../action";
 import { useSelector, useDispatch } from "react-redux";
-import Loading from "./Loading";
 import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -10,6 +9,7 @@ function Checkout() {
   const { loading, orders, error } = useSelector((last) => last.orders);
   const [getCart, setGetCart] = useState([]);
   const [address, setAddress] = useState([]);
+  const [status, setStatus] = useState(false);
   const [totolPrice, setTotolPrice] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,11 +42,15 @@ function Checkout() {
         title: error,
       });
     }
-    if(Object.keys(orders).length){
+    if (status && Object.keys(orders).length) {
+      console.log("status", status);
+      console.log("orders", Boolean(Object.keys(orders).length));
       Toast.fire({
         icon: "success",
-        title: 'order submit successfully',
+        title: "order submit successfully",
       });
+      localStorage.removeItem("cart");
+      navigate(`/orders/${orders._id}`);
     }
   }, [orders, error]);
 
@@ -68,125 +72,149 @@ function Checkout() {
     });
     const ordersList = {
       orderItems,
-      shippingAddress:{...shippingAddress},
+      shippingAddress: { ...shippingAddress },
       paymentMethod: "post",
       itemsPrice: totolPrice,
       shippingPrice: "0.00",
       totalPrice: totolPrice,
     };
     dispatch(setOrders({ ...ordersList }, userLs.token));
+    setStatus(true);
   };
 
-  if (!localStorage.getItem("user")) {
-    Toast.fire({
-      icon: "info",
-      title: `Please Login`,
-    });
-    return (
-      <>
-        <Navigate replace to="/login" />
-      </>
-    );
-  }
-  if (!localStorage.getItem("address")) {
-    Toast.fire({
-      icon: "info",
-      title: `Please completed address form`,
-    });
-    return (
-      <>
-        <Navigate replace to="/address" />
-      </>
-    );
-  }
+  switch (true) {
+    case Boolean(!localStorage.getItem("user")):
+      Toast.fire({
+        icon: "info",
+        title: `Please Login`,
+      });
+      return (
+        <>
+          <Navigate replace to="/login" />
+        </>
+      );
+    case Boolean(!localStorage.getItem("cart")):
+      Toast.fire({
+        icon: "info",
+        title: `The orders list is empty`,
+      });
+      return (
+        <>
+          <Navigate replace to="/" />
+        </>
+      );
 
-  return (
-    <div className="my-6">
-      <div className="grid grid-cols-6 text-center border bg-slate-200 shadow font-bold py-2 mb-2">
-        <div className="text-left px-4">Image</div>
-        <div className="col-span-2 ">Name</div>
-        <div className=" ">Price</div>
-        <div className=" ">Count</div>
-        <div className=" ">Total Price</div>
-      </div>
-      {getCart.map(({ product, count }, index) => {
-        return (
-          <div key={product._id}>
-            {Boolean(count) && (
-              <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50">
-                <div className=" ">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className=" lg:w-3/5"
-                  />
-                </div>
-                <div className="col-span-2">{product.name}</div>
-                <div className="">{product.price}$</div>
-                <div className="">{count}</div>
-                <div className="">{product.price * count}$</div>
+    case Boolean(!localStorage.getItem("address")):
+      Toast.fire({
+        icon: "info",
+        title: `Please completed address form`,
+      });
+      return (
+        <>
+          <Navigate replace to="/address" />
+        </>
+      );
+    default:
+      return (
+        <div className="my-6">
+          <div className="grid grid-cols-6 text-center border bg-slate-200 shadow font-bold py-2 mb-2">
+            <div className="text-left px-4">Image</div>
+            <div className="col-span-2 ">Name</div>
+            <div className=" ">Price</div>
+            <div className=" ">Count</div>
+            <div className=" ">Total Price</div>
+          </div>
+          {getCart.map(({ product, count }, index) => {
+            return (
+              <div key={product._id}>
+                {Boolean(count) && (
+                  <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50">
+                    <div className=" ">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className=" lg:w-3/5"
+                      />
+                    </div>
+                    <div className="col-span-2">{product.name}</div>
+                    <div className="">{product.price}$</div>
+                    <div className="">{count}</div>
+                    <div className="">{product.price * count}$</div>
+                  </div>
+                )}
               </div>
-            )}
+            );
+          })}
+          <div className="flex justify-end mb-3">
+            <div className="w-80 grid grid-cols-3 gap-2 border shadow-sm">
+              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+                Total Price
+              </div>
+              <div className="font-bold col-span-2 text-red-600 text-lg p-2">
+                {totolPrice}$
+              </div>
+            </div>
           </div>
-        );
-      })}
-      <div className="flex justify-end mb-3">
-        <div className="w-80 grid grid-cols-3 gap-2 border shadow-sm">
-          <div className="text-slate-500 bg-slate-100 p-2 font-bold">
-            Total Price
+          <hr className="my-3" />
+          <div className="grid lg:grid-cols-2 gap-1">
+            <div className="grid grid-cols-4 gap-2 border shadow-sm">
+              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+                Address
+              </div>
+              <div className="font-bold col-span-3 text-slate-600  p-2">
+                {address.address}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2 border shadow-sm">
+              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+                City
+              </div>
+              <div className="font-bold col-span-3 text-slate-600  p-2">
+                {address.city}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2 border shadow-sm">
+              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+                Postal code
+              </div>
+              <div className="font-bold col-span-3 text-slate-600  p-2">
+                {address.postalCode}
+              </div>
+            </div>
+            <div className="grid grid-cols-4 gap-2 border shadow-sm">
+              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+                Phone
+              </div>
+              <div className="font-bold col-span-3 text-slate-600  p-2">
+                {address.phone}
+              </div>
+            </div>
           </div>
-          <div className="font-bold col-span-2 text-red-600 text-lg p-2">
-            {totolPrice}$
-          </div>
-        </div>
-      </div>
-      <hr className="my-3" />
-      <div className="grid lg:grid-cols-2 gap-1">
-        <div className="grid grid-cols-4 gap-2 border shadow-sm">
-          <div className="text-slate-500 bg-slate-100 p-2 font-bold">
-            Address
-          </div>
-          <div className="font-bold col-span-3 text-slate-600  p-2">
-            {address.address}
-          </div>
-        </div>
-        <div className="grid grid-cols-4 gap-2 border shadow-sm">
-          <div className="text-slate-500 bg-slate-100 p-2 font-bold">City</div>
-          <div className="font-bold col-span-3 text-slate-600  p-2">
-            {address.city}
-          </div>
-        </div>
-        <div className="grid grid-cols-4 gap-2 border shadow-sm">
-          <div className="text-slate-500 bg-slate-100 p-2 font-bold">
-            Postal code
-          </div>
-          <div className="font-bold col-span-3 text-slate-600  p-2">
-            {address.postalCode}
-          </div>
-        </div>
-        <div className="grid grid-cols-4 gap-2 border shadow-sm">
-          <div className="text-slate-500 bg-slate-100 p-2 font-bold">Phone</div>
-          <div className="font-bold col-span-3 text-slate-600  p-2">
-            {address.phone}
-          </div>
-        </div>
-      </div>
 
-      <div className="flex justify-center gap-5">
-        <button
-          className="btn  mt-6"
-          onClick={() => {
-            navigate("/cart");
-          }}
-        >
-          Edit cart
-        </button>
-        <button className="btn mt-6" onClick={addOrder}>
-          Confrim
-        </button>
-      </div>
-    </div>
-  );
+          <div className="flex justify-center gap-5">
+            <button
+              className="btn  mt-6"
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
+              Edit cart
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn mt-6 flex gap-2 items-center"
+              onClick={addOrder}
+            >
+              <FaSpinner
+                className={loading ? "block animate-spin" : "hidden"}
+              />
+              Confrim
+            </button>
+          </div>
+        </div>
+      );
+  }
 }
 
 export default Checkout;

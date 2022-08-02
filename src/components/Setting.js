@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
-import { changeProfile, createUser, EmptyUser, getProfile } from "../action";
+import { changeProfile, getProfile } from "../action";
 import Swal from "sweetalert2";
 
 function Setting() {
   const { user, loading, error } = useSelector((state) => state.user);
   const localStorrageUser = JSON.parse(localStorage.getItem("user"));
+  const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     oldPassword: { value: "", validate: false, start: false },
@@ -54,14 +55,13 @@ function Setting() {
   };
 
   useEffect(() => {
-    if (error.length) {
+    if (status && error.length) {
       Toast.fire({
         icon: "error",
         title: error,
       });
-      dispatch(EmptyUser());
     }
-    if (Object.keys(user).length) {
+    if (status && Object.keys(user).length) {
       Toast.fire({
         icon: "success",
         title: `${user.name} changed successfully`,
@@ -74,239 +74,239 @@ function Setting() {
           localStorrageUser.token
         )
       );
-      dispatch(EmptyUser());
       navigate("/");
     }
   }, [error, user]);
 
   const newUser = () => {
     if (checkValidate()) {
-      // console.log("first");
       dispatch(getProfile(localStorrageUser.token));
+      setStatus(true);
     }
-    console.log(user, error);
   };
-  if (!localStorage.getItem("user")) {
-    Toast.fire({
-      icon: "info",
-      title: `Please Login`,
-    });
-    return (
-      <>
-        <Navigate to="/login" />
-      </>
-    );
-  }
-  return (
-    <div className="my-6 grid justify-center">
-      <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
-        <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
-          Change Password Page
-        </div>
-        <form
-          className="p-4"
-          noValidate
-          onSubmit={(e) => {
-            e.preventDefault();
-            newUser();
-          }}
-        >
-          {/* old password */}
-          <div className="mb-3">
-            <input
-              type="password"
-              className={
-                !oldPassword.validate && oldPassword.start
-                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
-                  : "input placeholder:text-sm"
-              }
-              placeholder="Old Password ..."
-              value={oldPassword.name}
-              onChange={(e) => {
-                let value = e.target.value;
-                setInputs((last) => {
-                  return {
-                    ...last,
-                    oldPassword: { ...oldPassword, value: value },
-                  };
-                });
+  switch (true) {
+    case Boolean(!localStorage.getItem("user")):
+      Toast.fire({
+        icon: "info",
+        title: `Please Login`,
+      });
+      return (
+        <>
+          <Navigate to="/login" />
+        </>
+      );
+    default:
+      return (
+        <div className="my-6 grid justify-center">
+          <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
+            <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
+              Change Password Page
+            </div>
+            <form
+              className="p-4"
+              noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                newUser();
               }}
-              onBlur={(e) => {
-                let value = e.target.value;
-
-                setInputs((last) => {
-                  return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                    value
-                  )
-                    ? {
+            >
+              {/* old password */}
+              <div className="mb-3">
+                <input
+                  type="password"
+                  className={
+                    !oldPassword.validate && oldPassword.start
+                      ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
+                      : "input placeholder:text-sm"
+                  }
+                  placeholder="Old Password ..."
+                  value={oldPassword.name}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setInputs((last) => {
+                      return {
                         ...last,
-                        oldPassword: {
-                          start: true,
-                          value: value,
-                          validate: true,
-                        },
-                      }
-                    : {
-                        ...last,
-                        oldPassword: {
-                          start: true,
-                          value: value,
-                          validate: false,
-                        },
+                        oldPassword: { ...oldPassword, value: value },
                       };
-                });
-              }}
-            />
-            {!oldPassword.validate && oldPassword.start && (
-              <p className="text-xs px-3 pt-1 text-red-500">
-                The old password field is invalid
-              </p>
-            )}
-          </div>
-          {/* new password */}
-          <div className="mb-3">
-            <input
-              type="password"
-              className={
-                !newPassword.validate && newPassword.start
-                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
-                  : "input placeholder:text-sm"
-              }
-              placeholder="New Password ..."
-              value={newPassword.name}
-              onChange={(e) => {
-                let value = e.target.value;
-                setInputs((last) => {
-                  return {
-                    ...last,
-                    newPassword: { ...newPassword, value: value },
-                  };
-                });
-              }}
-              onBlur={(e) => {
-                let value = e.target.value;
+                    });
+                  }}
+                  onBlur={(e) => {
+                    let value = e.target.value;
 
-                setInputs((last) => {
-                  if (
-                    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                      value
-                    )
-                  ) {
-                    return repeatPass.value === value
-                      ? {
+                    setInputs((last) => {
+                      return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+                        value
+                      )
+                        ? {
+                            ...last,
+                            oldPassword: {
+                              start: true,
+                              value: value,
+                              validate: true,
+                            },
+                          }
+                        : {
+                            ...last,
+                            oldPassword: {
+                              start: true,
+                              value: value,
+                              validate: false,
+                            },
+                          };
+                    });
+                  }}
+                />
+                {!oldPassword.validate && oldPassword.start && (
+                  <p className="text-xs px-3 pt-1 text-red-500">
+                    The old password field is invalid
+                  </p>
+                )}
+              </div>
+              {/* new password */}
+              <div className="mb-3">
+                <input
+                  type="password"
+                  className={
+                    !newPassword.validate && newPassword.start
+                      ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
+                      : "input placeholder:text-sm"
+                  }
+                  placeholder="New Password ..."
+                  value={newPassword.name}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setInputs((last) => {
+                      return {
+                        ...last,
+                        newPassword: { ...newPassword, value: value },
+                      };
+                    });
+                  }}
+                  onBlur={(e) => {
+                    let value = e.target.value;
+
+                    setInputs((last) => {
+                      if (
+                        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+                          value
+                        )
+                      ) {
+                        return repeatPass.value === value
+                          ? {
+                              ...last,
+                              newPassword: {
+                                start: true,
+                                value: value,
+                                validate: true,
+                              },
+                              repeatPass: {
+                                ...repeatPass,
+                                start: true,
+                                validate: true,
+                              },
+                            }
+                          : {
+                              ...last,
+                              newPassword: {
+                                start: true,
+                                value: value,
+                                validate: true,
+                              },
+                              repeatPass: {
+                                ...repeatPass,
+                                start: true,
+                                validate: false,
+                              },
+                            };
+                      } else {
+                        return {
                           ...last,
                           newPassword: {
                             start: true,
                             value: value,
-                            validate: true,
-                          },
-                          repeatPass: {
-                            ...repeatPass,
-                            start: true,
-                            validate: true,
-                          },
-                        }
-                      : {
-                          ...last,
-                          newPassword: {
-                            start: true,
-                            value: value,
-                            validate: true,
-                          },
-                          repeatPass: {
-                            ...repeatPass,
-                            start: true,
                             validate: false,
                           },
                         };
-                  } else {
-                    return {
-                      ...last,
-                      newPassword: {
-                        start: true,
-                        value: value,
-                        validate: false,
-                      },
-                    };
-                  }
-                });
-              }}
-            />
-            {!newPassword.validate && newPassword.start && (
-              <p className="text-xs px-3 pt-1 text-red-500">
-                The new password field is invalid
-              </p>
-            )}
-          </div>
-
-          {/* repeat password */}
-          <div className="mb-4">
-            <input
-              type="password"
-              className={
-                !repeatPass.validate && repeatPass.start
-                  ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
-                  : "input placeholder:text-sm"
-              }
-              placeholder="Repeat New Password ..."
-              value={inputs.repeatPass[0]}
-              onChange={(e) => {
-                let value = e.target.value;
-                setInputs((last) => {
-                  return {
-                    ...last,
-                    repeatPass: { ...repeatPass, value: value },
-                  };
-                });
-              }}
-              onBlur={(e) => {
-                let value = e.target.value;
-
-                setInputs((last) => {
-                  return value === newPassword.value
-                    ? {
-                        ...last,
-                        repeatPass: {
-                          start: true,
-                          value: value,
-                          validate: true,
-                        },
                       }
-                    : {
-                        ...last,
-                        repeatPass: {
-                          start: true,
-                          value: value,
-                          validate: false,
-                        },
-                      };
-                });
-              }}
-            />
-            {!repeatPass.validate && repeatPass.start && (
-              <p className="text-xs px-3 pt-1 text-red-500">
-                It must be the same as the new password field
-              </p>
-            )}
-          </div>
+                    });
+                  }}
+                />
+                {!newPassword.validate && newPassword.start && (
+                  <p className="text-xs px-3 pt-1 text-red-500">
+                    The new password field is invalid
+                  </p>
+                )}
+              </div>
 
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="btn flex gap-2 items-center"
-              disabled={loading}
-              onClick={newUser}
-            >
-              <FaSpinner
-                className={loading ? "block animate-spin" : "hidden"}
-              />
-              Change Password
-            </button>
+              {/* repeat password */}
+              <div className="mb-4">
+                <input
+                  type="password"
+                  className={
+                    !repeatPass.validate && repeatPass.start
+                      ? "input placeholder:text-sm border-red-500 placeholder:text-red-500 "
+                      : "input placeholder:text-sm"
+                  }
+                  placeholder="Repeat New Password ..."
+                  value={inputs.repeatPass[0]}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    setInputs((last) => {
+                      return {
+                        ...last,
+                        repeatPass: { ...repeatPass, value: value },
+                      };
+                    });
+                  }}
+                  onBlur={(e) => {
+                    let value = e.target.value;
+
+                    setInputs((last) => {
+                      return value === newPassword.value
+                        ? {
+                            ...last,
+                            repeatPass: {
+                              start: true,
+                              value: value,
+                              validate: true,
+                            },
+                          }
+                        : {
+                            ...last,
+                            repeatPass: {
+                              start: true,
+                              value: value,
+                              validate: false,
+                            },
+                          };
+                    });
+                  }}
+                />
+                {!repeatPass.validate && repeatPass.start && (
+                  <p className="text-xs px-3 pt-1 text-red-500">
+                    It must be the same as the new password field
+                  </p>
+                )}
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="btn flex gap-2 items-center"
+                  disabled={loading}
+                  onClick={newUser}
+                >
+                  <FaSpinner
+                    className={loading ? "block animate-spin" : "hidden"}
+                  />
+                  Change Password
+                </button>
+              </div>
+            </form>
           </div>
-        </form>
-      </div>
-    </div>
-  );
+        </div>
+      );
+  }
 }
 
 export default Setting;
