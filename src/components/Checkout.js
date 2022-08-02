@@ -6,8 +6,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Checkout() {
-  const { loading, orders, error } = useSelector((last) => last.orders);
-  const [getCart, setGetCart] = useState([]);
+  const { orders:{loading, orders, error},cart:{ data} } = useSelector((last) => last);
   const [address, setAddress] = useState([]);
   const [status, setStatus] = useState(false);
   const [totolPrice, setTotolPrice] = useState(0);
@@ -25,12 +24,12 @@ function Checkout() {
     },
   });
   useEffect(() => {
-    if (localStorage.getItem("cart")) {
+    if (data.length) {
       let price = 0;
-      JSON.parse(localStorage.getItem("cart")).forEach(({ product, count }) => {
+      data.forEach(({ product, count }) => {
         price += count * product.price;
       });
-      setGetCart(JSON.parse(localStorage.getItem("cart")));
+      
       setAddress(JSON.parse(localStorage.getItem("address")));
       setTotolPrice(price.toFixed(2));
     }
@@ -58,7 +57,7 @@ function Checkout() {
     const userLs = JSON.parse(localStorage.getItem("user"));
     const shippingAddress = { ...address };
     const orderItems = [];
-    getCart.forEach(({ product, count }) => {
+    data.forEach(({ product, count }) => {
       if (count) {
         orderItems.push({
           product: product._id,
@@ -124,7 +123,7 @@ function Checkout() {
             <div className=" ">Count</div>
             <div className=" ">Total Price</div>
           </div>
-          {getCart.map(({ product, count }, index) => {
+          {data.map(({ product, count }, index) => {
             return (
               <div key={product._id}>
                 {Boolean(count) && (

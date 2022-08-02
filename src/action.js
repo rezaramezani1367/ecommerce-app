@@ -92,6 +92,7 @@ export const createUser =
     }
   };
 export const exitUser = () => async (dispatch, getState) => {
+  
   dispatch({
     type: successUser,
     payload: {
@@ -136,12 +137,13 @@ export const loginUser = (email, password) => async (dispatch, getState) => {
     });
   }
 };
-export const getProfile = (token) => async (dispatch, getState) => {
+export const getProfile = () => async (dispatch, getState) => {
   dispatch({
     type: loadingUser,
     payload: { ...getState().user, loading: true },
   });
   try {
+    const {token}={...getState().user.user}
     const { data } = await axios.get(`${IpApi}/api/users/profile`, {
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +160,7 @@ export const getProfile = (token) => async (dispatch, getState) => {
       },
     });
   } catch (error) {
-    const errors = error.data ? error.data : error;
+    const errors = error.response.data ? error.response.data : error;
     dispatch({
       type: errorUser,
       payload: {
@@ -170,12 +172,18 @@ export const getProfile = (token) => async (dispatch, getState) => {
   }
 };
 export const changeProfile =
-  (name, email, password, token) => async (dispatch, getState) => {
-    dispatch({
-      type: loadingUser,
-      payload: { ...getState().user, loading: true },
-    });
-    try {
+(password) => async (dispatch, getState) => {
+  dispatch({
+    type: loadingUser,
+    payload: { ...getState().user, loading: true },
+  });
+  try {
+      const {user:{name,email}}={...getState().user};
+      // چون توکن ندارد از لوکال استورچ مجبوریم توکن رو بگیریم
+      const {token}={...JSON.parse(localStorage.getItem("user"))};
+      console.log("first",token)
+      console.log(getState().user)
+      console.log(name,email,token)
       const { data } = await axios.put(
         `${IpApi}/api/users/profile `,
         {
@@ -200,9 +208,9 @@ export const changeProfile =
         },
       });
       localStorage.setItem("user", JSON.stringify(data));
-    } catch ({ error }) {
+    } catch ( error ) {
       const errors = error.response.data ? error.response.data : error;
-
+      console.log(error)
       dispatch({
         type: errorUser,
         payload: {
@@ -262,6 +270,7 @@ export const getMyOrders = (token) => async (dispatch, getState) => {
     payload: { ...getState().orders, loading: true },
   });
   try {
+    
     const { data } = await axios.get(`${IpApi}/api/orders/myorders`, {
       headers: {
         "Content-Type": "application/json",
@@ -277,6 +286,7 @@ export const getMyOrders = (token) => async (dispatch, getState) => {
         orders: { ...data },
       },
     });
+    // console.log(getState());
   } catch (error) {
     console.log(error);
     dispatch({
@@ -434,7 +444,7 @@ export const addProductTocartLS = (productItem) => (dispatch, getState) => {
 
     let duplicateIndex = -1;
     data.forEach((item, index) => {
-      console.log(item.product._id, productItem._id);
+      // console.log(item.product._id, productItem._id);
       if (item.product._id == productItem._id) {
         console.log("item");
         duplicateIndex = index;

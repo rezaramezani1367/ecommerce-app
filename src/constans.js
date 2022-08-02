@@ -10,4 +10,4 @@ export const errorOrders="errorOrders";
 export const successOrders="successOrders";
 export const loadingCart="loadingCart";
 export const errorCart="errorCart";
-export const successCart="successOrders";
+export const successCart="successCart";

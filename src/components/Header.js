@@ -6,12 +6,14 @@ import Swal from "sweetalert2";
 import { exitUser } from "../action";
 
 function Header() {
-  const { user:{user},cart:{data}} = useSelector((state) => state);
+  const {
+    user: { user },
+    cart: { data },
+  } = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState({});
   const [flagUser, setFlagUser] = useState(false);
-  const [countCart, setCountCart] = useState(0)
+  const [countCart, setCountCart] = useState(0);
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -23,25 +25,15 @@ function Header() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
-  useEffect(() => {
-    let totalCount=0;
-    console.log(data)
-    data.forEach(({count})=>{
-      totalCount +=count;
-    })
-  //  console.log(data)
-   setCountCart(totalCount);
-  }, [data])
-  
 
   useEffect(() => {
-    console.log(user)
-    setProfile(
-      localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user"))
-        : {}
-    );
-  }, [user]);
+    let totalCount = 0;
+    data.forEach(({ count }) => {
+      totalCount += count;
+    });
+    setCountCart(totalCount);
+  }, [data]);
+
 
   return (
     <div className="border-b shadow py-2.5">
@@ -52,7 +44,7 @@ function Header() {
         <div>
           <ul className="flex flex-row-reverse items-center gap-12">
             <li className="font-bold ">
-              {Object.keys(profile).length ? (
+              {Object.keys(user).length ? (
                 <div className="relative">
                   <div
                     className="cursor-pointer btn-user"
@@ -105,7 +97,7 @@ function Header() {
                   navigate("/cart");
                 }}
               >
-               {countCart}
+                {countCart}
               </p>
             </li>
           </ul>

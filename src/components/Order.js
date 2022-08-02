@@ -7,7 +7,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Order() {
-  const { loading, orders, error } = useSelector((last) => last.orders);
+  const { orders:{loading, orders, error}, } = useSelector((last) => last);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

@@ -7,8 +7,8 @@ import Swal from "sweetalert2";
 
 function Setting() {
   const { user, loading, error } = useSelector((state) => state.user);
-  const localStorrageUser = JSON.parse(localStorage.getItem("user"));
   const [status, setStatus] = useState(false);
+  
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     oldPassword: { value: "", validate: false, start: false },
@@ -66,22 +66,16 @@ function Setting() {
         icon: "success",
         title: `${user.name} changed successfully`,
       });
-      dispatch(
-        changeProfile(
-          localStorrageUser.name,
-          localStorrageUser.email,
-          newPassword.value,
-          localStorrageUser.token
-        )
-      );
+      dispatch(changeProfile(newPassword.value));
       navigate("/");
     }
   }, [error, user]);
 
-  const newUser = () => {
+  const changeUser = () => {
     if (checkValidate()) {
-      dispatch(getProfile(localStorrageUser.token));
+      dispatch(getProfile());
       setStatus(true);
+
     }
   };
   switch (true) {
@@ -107,7 +101,7 @@ function Setting() {
               noValidate
               onSubmit={(e) => {
                 e.preventDefault();
-                newUser();
+                changeUser();
               }}
             >
               {/* old password */}
@@ -294,7 +288,7 @@ function Setting() {
                   type="submit"
                   className="btn flex gap-2 items-center"
                   disabled={loading}
-                  onClick={newUser}
+                  onClick={changeUser}
                 >
                   <FaSpinner
                     className={loading ? "block animate-spin" : "hidden"}
