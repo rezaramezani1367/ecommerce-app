@@ -249,7 +249,17 @@ export const setOrders = (orders, token) => async (dispatch, getState) => {
         orders: { ...data },
       },
     });
-    console.log(getState().orders);
+    // remove cart
+    dispatch({
+      type: successCart,
+      payload: {
+        error: "",
+        loading: false,
+        data: [],
+      },
+    })
+    localStorage.removeItem("cart");
+
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
 

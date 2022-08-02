@@ -7,7 +7,7 @@ import { FaEye, FaStar } from "react-icons/fa";
 import Error from "./Error";
 
 function Product() {
-  const { data, loading, error } = useSelector((state) => state.products);
+  const { products:{data, loading, error }} = useSelector((state) => state);
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,30 +17,7 @@ function Product() {
   }, []);
 
   const CartAddToStorage = () => {
-    dispatch(addProductTocartLS([...data][0]))
-    // let card = [];
-    // let duplicateIndex = -1;
-    // if (localStorage.getItem("cart")) {
-    //   card = [...JSON.parse(localStorage.getItem("cart"))];
-    //   card.forEach((item, index) => {
-    //     if (item.product._id === [...data][0]._id) {
-    //       let help = [...card];
-    //       duplicateIndex = index;
-    //       help[duplicateIndex].count =
-    //         help[duplicateIndex].count < [...data][0].countInStock
-    //           ? help[duplicateIndex].count + 1
-    //           : [...data][0].countInStock;
-    //       card = [...help];
-    //     }
-    //   });
-    // }
-
-    // card =
-    //   duplicateIndex > -1
-    //     ? [...card]
-    //     : [...card, { product: [...data][0], count: 1 }];
-
-    // localStorage.setItem("cart", JSON.stringify(card));
+    dispatch(addProductTocartLS([...data][0]));
   };
   switch (true) {
     case loading:

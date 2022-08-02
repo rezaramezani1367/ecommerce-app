@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import {  FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import { setOrders } from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Checkout() {
-  const { orders:{loading, orders, error},cart:{ data} } = useSelector((last) => last);
+  const {
+    orders: { loading, orders, error },
+    cart: { data },
+    user: { user },
+  } = useSelector((last) => last);
   const [address, setAddress] = useState([]);
   const [status, setStatus] = useState(false);
   const [totolPrice, setTotolPrice] = useState(0);
@@ -29,7 +33,7 @@ function Checkout() {
       data.forEach(({ product, count }) => {
         price += count * product.price;
       });
-      
+
       setAddress(JSON.parse(localStorage.getItem("address")));
       setTotolPrice(price.toFixed(2));
     }
@@ -48,13 +52,11 @@ function Checkout() {
         icon: "success",
         title: "order submit successfully",
       });
-      localStorage.removeItem("cart");
       navigate(`/orders/${orders._id}`);
     }
   }, [orders, error]);
 
   const addOrder = () => {
-    const userLs = JSON.parse(localStorage.getItem("user"));
     const shippingAddress = { ...address };
     const orderItems = [];
     data.forEach(({ product, count }) => {
@@ -77,12 +79,12 @@ function Checkout() {
       shippingPrice: "0.00",
       totalPrice: totolPrice,
     };
-    dispatch(setOrders({ ...ordersList }, userLs.token));
+    dispatch(setOrders({ ...ordersList }, user.token));
     setStatus(true);
   };
 
   switch (true) {
-    case Boolean(!localStorage.getItem("user")):
+    case Boolean(!Object.keys(user).length):
       Toast.fire({
         icon: "info",
         title: `Please Login`,
@@ -92,7 +94,7 @@ function Checkout() {
           <Navigate replace to="/login" />
         </>
       );
-    case Boolean(!localStorage.getItem("cart")):
+    case Boolean(!Object.keys(data).length):
       Toast.fire({
         icon: "info",
         title: `The orders list is empty`,
@@ -126,21 +128,19 @@ function Checkout() {
           {data.map(({ product, count }, index) => {
             return (
               <div key={product._id}>
-                {Boolean(count) && (
-                  <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50">
-                    <div className=" ">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className=" lg:w-3/5"
-                      />
-                    </div>
-                    <div className="col-span-2">{product.name}</div>
-                    <div className="">{product.price}$</div>
-                    <div className="">{count}</div>
-                    <div className="">{product.price * count}$</div>
+                <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50">
+                  <div className=" ">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className=" lg:w-3/5"
+                    />
                   </div>
-                )}
+                  <div className="col-span-2">{product.name}</div>
+                  <div className="">{product.price}$</div>
+                  <div className="">{count}</div>
+                  <div className="">{product.price * count}$</div>
+                </div>
               </div>
             );
           })}

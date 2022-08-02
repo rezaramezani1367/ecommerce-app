@@ -7,7 +7,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Orders() {
-  const { loading, orders, error } = useSelector((last) => last.orders);
+  const { orders:{loading, orders, error},user:{user} } = useSelector((last) => last);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,17 +22,15 @@ function Orders() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
-  const userLS = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user"))
-    : {};
+
   useEffect(() => {
-    if (Object.keys(userLS).length) {
-      dispatch(getMyOrders(userLS.token));
+    if (Object.keys(user).length) {
+      dispatch(getMyOrders(user.token));
     }
   }, []);
 
   switch (true) {
-    case Boolean(!localStorage.getItem("user")):
+    case Boolean(!Object.keys(user).length):
       Toast.fire({
         icon: "info",
         title: `Please Login`,

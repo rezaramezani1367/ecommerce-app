@@ -15,7 +15,7 @@ function Cart() {
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 3000,
+    timer: 2000,
     timerProgressBar: true,
     didOpen: (toast) => {
       toast.addEventListener("mouseenter", Swal.stopTimer);
@@ -36,9 +36,16 @@ function Cart() {
   };
   const minusCounter = (index) => {
     dispatch(minusTocartLS(index));
+    if (data[index].count === 0) {
+      Toast.fire({
+        icon: "error",
+        title: `${data[index].product.name} is deleted from cart`,
+      });
+      dispatch(removeFromcartLS(index));
+    }
   };
   const removeItem = (index) => {
-  dispatch(removeFromcartLS(index))
+    dispatch(removeFromcartLS(index));
   };
   switch (true) {
     case !localStorage.getItem("cart"):
@@ -53,23 +60,22 @@ function Cart() {
     default:
       return (
         <div className="my-6">
-          {data.map((item, index) => {
-            const { product, count } = item;
+          {data.map(({ product, count }, index) => {
             return (
               <div
-                className="border grid grid-cols-11 items-center gap-2 my-2 shadow"
+                className="border grid grid-cols-12 md:grid-cols-11 items-center gap-2 my-2 shadow text-xs font-normal md:text-base md:font-bold"
                 key={product._id}
               >
                 <div
-                  className="col-span-1 hover:cursor-pointer transition-all"
+                  className="col-span-2 md:col-span-1 hover:cursor-pointer transition-all "
                   onClick={() => {
                     navigate(`/products/${product._id}`);
                   }}
                 >
-                  <img src={product.image} alt={product.name} />
+                  <img src={product.image} alt={product.name} c />
                 </div>
                 <div
-                  className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all"
+                  className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all line-clamp-1"
                   onClick={() => {
                     navigate(`/products/${product._id}`);
                   }}
@@ -81,16 +87,18 @@ function Cart() {
                     {product.price?.toFixed(2)}$
                   </span>
                 </div>
-                <div className="border flex items-center gap-1 md:gap-2 lg:gap-7 justify-center shadow-sm col-span-2">
+                <div className="border grid grid-cols-4  items-center  justify-center shadow-lg col-span-2 text-center md:h-1/2">
                   <div
-                    className=" cursor-pointer text-sm text-red-600"
+                    className=" cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
                     onClick={() => minusCounter(index)}
                   >
                     <FaMinus />
                   </div>
-                  <span className="font-bold text-xl">{count}</span>
+                  <div className="font-bold text-xl col-span-2 h-full">
+                    {count}
+                  </div>
                   <div
-                    className=" cursor-pointer text-sm text-green-600"
+                    className=" cursor-pointer text-sm  flex justify-center text-green-500 border-l hover:bg-slate-200 h-full items-center  transition-all duration-150"
                     onClick={() => addCounter(index)}
                   >
                     <FaPlus />
@@ -111,12 +119,12 @@ function Cart() {
               </div>
             );
           })}
-          <div className="flex justify-end ">
-            <div className="w-80 grid grid-cols-3 gap-2 border shadow-sm">
-              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+          <div className="flex justify-end">
+            <div className="w-2/3  sm:w-2/5 grid grid-cols-2 gap-2 border  text-xs font-normal md:text-base md:font-bold  items-center">
+              <div className="text-slate-500 bg-slate-100  font-bold h-full p-2">
                 Total Price
               </div>
-              <div className="font-bold col-span-2 text-red-600 text-lg p-2">
+              <div className="font-bold text-red-600 md:text-lg h-full p-2">
                 {totolPrice}$
               </div>
             </div>

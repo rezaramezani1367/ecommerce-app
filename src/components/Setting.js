@@ -6,7 +6,7 @@ import { changeProfile, getProfile } from "../action";
 import Swal from "sweetalert2";
 
 function Setting() {
-  const { user, loading, error } = useSelector((state) => state.user);
+  const { user:{user, loading, error} } = useSelector((state) => state);
   const [status, setStatus] = useState(false);
   
   const dispatch = useDispatch();
@@ -79,7 +79,7 @@ function Setting() {
     }
   };
   switch (true) {
-    case Boolean(!localStorage.getItem("user")):
+    case Boolean(!Object.keys(user).length):
       Toast.fire({
         icon: "info",
         title: `Please Login`,

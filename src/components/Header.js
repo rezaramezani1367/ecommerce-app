@@ -55,15 +55,21 @@ function Header() {
                     <FaUser />
                   </div>
                   {flagUser && (
-                    <ul className="absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white py-2 pl-2 pr-6 rounded-md">
-                      <li className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150">
+                    <ul className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md">
+                      
+                      <li className=" text-green-700 text-base p-2 bg-slate-200">
+                       Hi {user.name}
+                      </li>
+                      <hr />
+                      
+                      <li className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4">
                         <Link to="/setting">Setting</Link>
                       </li>
-                      <li className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150">
+                      <li className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4">
                         <Link to="/orders">Orders</Link>
                       </li>
                       <li
-                        className="cursor-pointer my-1 hover:text-red-600 transition-all duration-150"
+                        className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4"
                         onClick={() => {
                           dispatch(exitUser());
                           Toast.fire({

@@ -6,7 +6,7 @@ import { loginUser } from "../action";
 import Swal from "sweetalert2";
 
 function Login() {
-  const { user, loading, error } = useSelector((state) => state.user);
+  const { user:{user, loading, error} } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     email: { value: "", validate: false, start: false },
@@ -65,7 +65,7 @@ function Login() {
     }
   };
   switch (true) {
-    case Boolean(localStorage.getItem("user")):
+    case Boolean(Object.keys(user).length):
       Toast.fire({
         icon: "success",
         title: `User loged in`,

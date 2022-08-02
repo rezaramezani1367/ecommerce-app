@@ -6,7 +6,7 @@ import { createUser } from "../action";
 import Swal from "sweetalert2";
 
 function Signup() {
-  const { user, loading, error } = useSelector((state) => state.user);
+  const { user:{user, loading, error }} = useSelector((state) => state);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     name: { value: "", validate: false, start: false },
@@ -78,7 +78,7 @@ function Signup() {
     }
   };
   switch (true) {
-    case Boolean(localStorage.getItem("user")):
+    case Boolean(Object.keys(user).length):
       Toast.fire({
         icon: "success",
         title: `User sign up`,

@@ -9,27 +9,6 @@ module.exports = {
       }
     },
   },
-  plugins: [function ({ addComponents }) {
-  }],
+  plugins: [require('@tailwindcss/line-clamp'),],
 }
 
-// addComponents({
-//   '.container': {
-//     maxWidth: '100%',
-//     '@screen sm': {
-//       maxWidth: '500px',
-//     },
-//     '@screen md': {
-//       maxWidth: '600px',
-//     },
-//     '@screen lg': {
-//       maxWidth: '900px',
-//     },
-//     '@screen xl': {
-//       maxWidth: '1100px',
-//     },
-//     '@screen 2xl': {
-//       maxWidth: '1250px',
-//     },
-//   }
-// })

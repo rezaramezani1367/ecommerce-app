@@ -7,7 +7,7 @@ import { FaEye, FaStar } from "react-icons/fa";
 import Error from "./Error";
 
 function Home() {
-  const { data, loading, error } = useSelector((state) => state.products);
+  const { products:{data, loading, error} } = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
