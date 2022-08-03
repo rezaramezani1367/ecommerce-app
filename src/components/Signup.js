@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
 import { createUser } from "../action";
 import Swal from "sweetalert2";
 
 function Signup() {
-  const { user:{user, loading, error }} = useSelector((state) => state);
+  const {
+    user: { user, loading, error },
+  } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     name: { value: "", validate: false, start: false },
@@ -16,7 +18,7 @@ function Signup() {
   });
   const { name, email, password, repeatPass } = { ...inputs };
   const navigate = useNavigate();
-
+  const { pathname } = useLocation();
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -57,6 +59,9 @@ function Signup() {
     return true;
   };
   useEffect(() => {
+    document.title = "signup";
+  }, []);
+  useEffect(() => {
     if (error.length) {
       Toast.fire({
         icon: "error",
@@ -92,9 +97,27 @@ function Signup() {
       return (
         <div className="my-6 grid justify-center">
           <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
-            <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
-              Sign up Page
+            <div className="flex gap-5 border text-lg px-4 py-3">
+              <div
+                className={
+                  pathname === "/login"
+                    ? "text-red-600 border-b-2  pb-1.5 border-red-600 font-extrabold"
+                    : ""
+                }
+              >
+                <Link to="/login">Login</Link>
+              </div>
+              <div
+                className={
+                  pathname === "/signup"
+                    ? "text-red-600 border-b-2  pb-1.5 border-red-600 font-extrabold"
+                    : ""
+                }
+              >
+                <Link to="/signup">Sign up</Link>
+              </div>
             </div>
+            <hr />
             <form
               className="p-4"
               noValidate

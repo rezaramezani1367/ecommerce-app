@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus, FaRegTimesCircle, FaRegTrashAlt } from "react-icons/fa";
+import {
+  FaMinus,
+  FaPlus,
+  FaRegTimesCircle,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import { AddTocartLS, minusTocartLS, removeFromcartLS } from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Cart() {
-  const { data, error, loading } = useSelector((last) => last.cart);
+  const {
+    cart: { data, error, loading },
+    user: { user },
+  } = useSelector((last) => last);
   const dispatch = useDispatch();
 
   const [totolPrice, setTotolPrice] = useState(0);
@@ -22,6 +30,10 @@ function Cart() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
+  useEffect(() => {
+    document.title = `Cart `;
+  }, [])
+  
 
   useEffect(() => {
     let price = 0;
@@ -58,7 +70,7 @@ function Cart() {
     dispatch(removeFromcartLS(index));
   };
   switch (true) {
-    case !localStorage.getItem("cart"):
+    case Boolean(!Object.keys(data).length):
       return (
         <div className="flex justify-center items-center h-96">
           <div className="font-bold text-2xl text-red-500">
@@ -82,7 +94,7 @@ function Cart() {
                     navigate(`/products/${product._id}`);
                   }}
                 >
-                  <img src={product.image} alt={product.name} c />
+                  <img src={product.image} alt={product.name} />
                 </div>
                 <div
                   className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all line-clamp-2 md:line-clamp-1"
@@ -99,13 +111,16 @@ function Cart() {
                 </div>
                 <div className="border grid grid-cols-4  items-center  justify-center shadow-lg col-span-4 md:col-span-2 text-center md:h-2/3 lg:h-3/5">
                   <div
-                    className=" cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
+                    className="cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
                     onClick={() => minusCounter(index)}
                   >
-                    {count===1 ? <FaRegTrashAlt  /> :<FaMinus />}
+                    {count === 1 ? <FaRegTrashAlt /> : <FaMinus />}
                   </div>
                   <div className="font-bold text-xl col-span-2 h-full flex items-center justify-center gap-1">
-                    <span>{count}</span> {count === product.countInStock && <span className="text-xs text-red-500">| max</span>}
+                    <span>{count}</span>
+                    {count === product.countInStock && (
+                      <span className="text-xs text-red-500">| max</span>
+                    )}
                   </div>
                   <div
                     className=" cursor-pointer text-sm  flex justify-center text-green-500 border-l hover:bg-slate-200 h-full items-center  transition-all duration-150"
@@ -143,22 +158,23 @@ function Cart() {
             <button
               className="btn mt-6"
               onClick={() => {
-                if (!localStorage.getItem("user")) {
-                  Toast.fire({
-                    icon: "warning",
-                    title: `please Login`,
-                  });
+                switch (true) {
+                  case !Object.keys(user):
+                    Toast.fire({
+                      icon: "warning",
+                      title: `please Login`,
+                    });
 
-                  navigate("/login");
-                } else if (!localStorage.getItem("address")) {
-                  Toast.fire({
-                    icon: "warning",
-                    title: `Please complete the address form`,
-                  });
+                    navigate("/login");
+                  case Boolean(!localStorage.getItem("address")):
+                    Toast.fire({
+                      icon: "warning",
+                      title: `Please complete the address form`,
+                    });
 
-                  navigate("/address");
-                } else {
-                  navigate("/checkout");
+                    navigate("/address");
+                  default:
+                    navigate("/checkout");
                 }
               }}
             >

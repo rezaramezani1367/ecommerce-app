@@ -26,6 +26,7 @@ function Address() {
     },
   });
   useEffect(() => {
+    document.title = `Address `;
     if (localStorage.getItem("address")) {
       const addressLs = JSON.parse(localStorage.getItem("address"));
       setInputs((last) => {

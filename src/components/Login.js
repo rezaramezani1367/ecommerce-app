@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaSpinner } from "react-icons/fa";
 import { loginUser } from "../action";
 import Swal from "sweetalert2";
 
 function Login() {
-  const { user:{user, loading, error} } = useSelector((state) => state);
+  const {
+    user: { user, loading, error },
+  } = useSelector((state) => state);
   const dispatch = useDispatch();
+  const { pathname } = useLocation();
+
   const [inputs, setInputs] = useState({
     email: { value: "", validate: false, start: false },
     password: { value: "", validate: false, start: false },
@@ -44,6 +48,9 @@ function Login() {
     return true;
   };
   useEffect(() => {
+    document.title = "login";
+  }, []);
+  useEffect(() => {
     if (error.length) {
       Toast.fire({
         icon: "error",
@@ -79,11 +86,29 @@ function Login() {
       return (
         <div className="my-6 grid justify-center">
           <div className="w-100 sm:w-96 border rounded-xl shadow-lg overflow-hidden">
-            <div className="text-center py-3 font-bold text-xl mb-2 border-b bg-slate-200">
-              Login Page
+            <div className="flex gap-5  px-4 py-3 text-lg">
+              <div
+                className={
+                  pathname === "/login"
+                    ? "text-red-600 border-b-2  pb-1.5 border-red-600 font-extrabold"
+                    : ""
+                }
+              >
+                <Link to="/login">Login</Link>
+              </div>
+              <div
+                className={
+                  pathname === "/signup"
+                    ? "text-red-600 border-b-2  pb-1.5 border-red-600 font-extrabold"
+                    : ""
+                }
+              >
+                <Link to="/signup">Sign up</Link>
+              </div>
             </div>
+            <hr />
             <form
-              className="p-4"
+              className="p-4 "
               noValidate
               onSubmit={(e) => {
                 e.preventDefault();

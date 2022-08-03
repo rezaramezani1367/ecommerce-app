@@ -7,12 +7,15 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Order() {
-  const { orders:{loading, orders, error},user:{user} } = useSelector((last) => last);
+  const {
+    orders: { loading, orders, error },
+    user: { user },
+  } = useSelector((last) => last);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const Toast = Swal.mixin({ 
+  const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
@@ -23,7 +26,9 @@ function Order() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
-   useEffect(() => {
+
+  useEffect(() => {
+    document.title = `Order`;
     if (Object.keys(user).length) {
       dispatch(getDetailsOrder(id, user.token));
     }
@@ -82,7 +87,7 @@ function Order() {
 
           <hr className="my-3" />
           <p className="font-bold text-lg mb-2">Detailed review:</p>
-          <div className="grid grid-cols-6 text-center border bg-slate-200 shadow  py-2 mb-2  text-xs font-normal md:text-base md:font-bold" >
+          <div className="grid grid-cols-6 text-center border bg-slate-200 shadow  py-2 mb-2  text-xs font-normal md:text-base md:font-bold">
             <div className="text-left px-4">Image</div>
             <div className="col-span-2 ">Name</div>
             <div className=" ">Price</div>
@@ -114,12 +119,11 @@ function Order() {
                 Total Price
               </div>
               <div className="font-bold text-red-600 md:text-lg h-full p-2">
-              {orders.totalPrice}$
+                {orders.totalPrice}$
               </div>
             </div>
           </div>
-         
-                
+
           <hr className="my-3" />
           <p className="font-bold text-lg mb-2">Address:</p>
           <div className="grid lg:grid-cols-2 gap-1">

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { exitUser } from "../action";
+
 
 function Header() {
   const {
@@ -33,7 +34,11 @@ function Header() {
     });
     setCountCart(totalCount);
   }, [data]);
+  useEffect(() => {
+    setFlagUser(false)
+  }, []);
 
+  
 
   return (
     <div className="border-b shadow py-2.5">
@@ -55,27 +60,28 @@ function Header() {
                     <FaUser />
                   </div>
                   {flagUser && (
-                    <ul className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md">
+                    <ul id="someElementID" className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md" >
                       
                       <li className=" text-green-700 text-base p-2 bg-slate-200">
                        Hi {user.name}
                       </li>
                       <hr />
                       
-                      <li className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4">
+                      <li className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b" onClick={()=>{setFlagUser(false)}}>
                         <Link to="/setting">Setting</Link>
                       </li>
-                      <li className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4">
+                      <li className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b" onClick={()=>{setFlagUser(false)}}>
                         <Link to="/orders">Orders</Link>
                       </li>
                       <li
-                        className="cursor-pointer my-2 hover:text-red-600 transition-all duration-150 px-4"
+                        className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1"
                         onClick={() => {
                           dispatch(exitUser());
                           Toast.fire({
                             icon: "success",
                             title: `User loged out`,
                           });
+                          setFlagUser(false)
                           navigate("/");
                         }}
                       >

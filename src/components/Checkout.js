@@ -27,7 +27,9 @@ function Checkout() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
+ 
   useEffect(() => {
+    document.title = `Checkout `;
     if (data.length) {
       let price = 0;
       data.forEach(({ product, count }) => {
@@ -204,7 +206,7 @@ function Checkout() {
               </div>
             </div>
           </div>
-          <div className="mt-3">
+          <div className="mt-1.5">
             <button
               className="btn-edit flex gap-1 items-center"
               onClick={() => {

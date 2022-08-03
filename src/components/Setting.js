@@ -53,6 +53,10 @@ function Setting() {
     }
     return true;
   };
+  useEffect(() => {
+    document.title = `Setting`;
+  }, [])
+  
 
   useEffect(() => {
     if (status && error.length) {

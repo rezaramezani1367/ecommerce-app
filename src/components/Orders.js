@@ -24,6 +24,7 @@ function Orders() {
   });
 
   useEffect(() => {
+    document.title = `Orders`;
     if (Object.keys(user).length) {
       dispatch(getMyOrders(user.token));
     }
