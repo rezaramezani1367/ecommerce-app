@@ -65,14 +65,14 @@ function Order() {
       return (
         <div className="my-6">
           <p className="font-bold text-lg mb-2">General review:</p>
-          <div className="grid grid-cols-5 text-center border bg-slate-200 shadow font-bold py-2 mb-2 gap-1">
+          <div className="grid grid-cols-5 text-center border bg-slate-200 shadow py-2 mb-2 gap-1  text-xs font-normal md:text-base md:font-bold">
             <div className="">Count Items Order</div>
             <div className="">total Price</div>
             <div>Is Paid</div>
             <div className="">Is Delivered</div>
             <div className="">Create at</div>
           </div>
-          <div className="grid grid-cols-5 text-center border bg-slate-50 shadow font-bold py-2 mb-2 hover:cursor-pointer hover:bg-slate-300 transition-all duration-200 gap-1">
+          <div className="grid grid-cols-5 text-center border bg-slate-50 shadow py-2 mb-2 hover:cursor-pointer hover:bg-slate-300 transition-all duration-200 gap-1  text-xs font-normal md:text-base md:font-bold">
             <div className="">{orders.orderItems?.length}</div>
             <div className="text-red-500 ">{orders.totalPrice}$</div>
             <div>{orders.isPaid ? "Yes" : "No"}</div>
@@ -82,7 +82,7 @@ function Order() {
 
           <hr className="my-3" />
           <p className="font-bold text-lg mb-2">Detailed review:</p>
-          <div className="grid grid-cols-6 text-center border bg-slate-200 shadow font-bold py-2 mb-2">
+          <div className="grid grid-cols-6 text-center border bg-slate-200 shadow  py-2 mb-2  text-xs font-normal md:text-base md:font-bold" >
             <div className="text-left px-4">Image</div>
             <div className="col-span-2 ">Name</div>
             <div className=" ">Price</div>
@@ -92,7 +92,7 @@ function Order() {
           {orders.orderItems?.map((item) => {
             return (
               <div key={item._id}>
-                <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50">
+                <div className="grid grid-cols-6 text-center border  items-center my-1 bg-slate-50  text-xs font-normal md:text-base md:font-bold">
                   <div className=" ">
                     <img
                       src={item.image}
@@ -108,16 +108,18 @@ function Order() {
               </div>
             );
           })}
-          <div className="flex justify-end mb-3">
-            <div className="w-80 grid grid-cols-3 gap-2 border shadow-sm">
-              <div className="text-slate-500 bg-slate-100 p-2 font-bold">
+          <div className="flex justify-end">
+            <div className="w-2/3  sm:w-2/5 grid grid-cols-2 gap-2 border  text-xs font-normal md:text-base md:font-bold  items-center">
+              <div className="text-slate-500 bg-slate-100  font-bold h-full p-2">
                 Total Price
               </div>
-              <div className="font-bold col-span-2 text-red-600 text-lg p-2">
-                {orders.totalPrice}$
+              <div className="font-bold text-red-600 md:text-lg h-full p-2">
+              {orders.totalPrice}$
               </div>
             </div>
           </div>
+         
+                
           <hr className="my-3" />
           <p className="font-bold text-lg mb-2">Address:</p>
           <div className="grid lg:grid-cols-2 gap-1">
@@ -125,7 +127,7 @@ function Order() {
               <div className="text-slate-500 bg-slate-100 p-2 font-bold">
                 Address
               </div>
-              <div className="font-bold col-span-3 text-slate-600  p-2">
+              <div className=" col-span-3 text-slate-600  p-2">
                 {orders.shippingAddress?.address}
               </div>
             </div>
@@ -133,7 +135,7 @@ function Order() {
               <div className="text-slate-500 bg-slate-100 p-2 font-bold">
                 City
               </div>
-              <div className="font-bold col-span-3 text-slate-600  p-2">
+              <div className=" col-span-3 text-slate-600  p-2">
                 {orders.shippingAddress?.city}
               </div>
             </div>
@@ -141,7 +143,7 @@ function Order() {
               <div className="text-slate-500 bg-slate-100 p-2 font-bold">
                 Postal code
               </div>
-              <div className="font-bold col-span-3 text-slate-600  p-2">
+              <div className=" col-span-3 text-slate-600  p-2">
                 {orders.shippingAddress?.postalCode}
               </div>
             </div>
@@ -149,7 +151,7 @@ function Order() {
               <div className="text-slate-500 bg-slate-100 p-2 font-bold">
                 Phone
               </div>
-              <div className="font-bold col-span-3 text-slate-600  p-2">
+              <div className=" col-span-3 text-slate-600  p-2">
                 {orders.shippingAddress?.phone}
               </div>
             </div>

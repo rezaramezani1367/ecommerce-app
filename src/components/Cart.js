@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaMinus, FaPlus, FaRegTimesCircle } from "react-icons/fa";
+import { FaMinus, FaPlus, FaRegTimesCircle, FaRegTrashAlt } from "react-icons/fa";
 import { AddTocartLS, minusTocartLS, removeFromcartLS } from "../action";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,12 @@ function Cart() {
 
   const addCounter = (index) => {
     dispatch(AddTocartLS(index));
+    if (data[index].count === data[index].product.countInStock) {
+      Toast.fire({
+        icon: "error",
+        title: `${data[index].product.name} is max count`,
+      });
+    }
   };
   const minusCounter = (index) => {
     dispatch(minusTocartLS(index));
@@ -45,6 +51,10 @@ function Cart() {
     }
   };
   const removeItem = (index) => {
+    Toast.fire({
+      icon: "error",
+      title: `${data[index].product.name} is deleted from cart`,
+    });
     dispatch(removeFromcartLS(index));
   };
   switch (true) {
@@ -75,7 +85,7 @@ function Cart() {
                   <img src={product.image} alt={product.name} c />
                 </div>
                 <div
-                  className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all line-clamp-1"
+                  className="font-bold col-span-3 hover:cursor-pointer hover:text-red-800 transition-all line-clamp-2 md:line-clamp-1"
                   onClick={() => {
                     navigate(`/products/${product._id}`);
                   }}
@@ -87,15 +97,15 @@ function Cart() {
                     {product.price?.toFixed(2)}$
                   </span>
                 </div>
-                <div className="border grid grid-cols-4  items-center  justify-center shadow-lg col-span-2 text-center md:h-1/2">
+                <div className="border grid grid-cols-4  items-center  justify-center shadow-lg col-span-4 md:col-span-2 text-center md:h-2/3 lg:h-3/5">
                   <div
                     className=" cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
                     onClick={() => minusCounter(index)}
                   >
-                    <FaMinus />
+                    {count===1 ? <FaRegTrashAlt  /> :<FaMinus />}
                   </div>
-                  <div className="font-bold text-xl col-span-2 h-full">
-                    {count}
+                  <div className="font-bold text-xl col-span-2 h-full flex items-center justify-center gap-1">
+                    <span>{count}</span> {count === product.countInStock && <span className="text-xs text-red-500">| max</span>}
                   </div>
                   <div
                     className=" cursor-pointer text-sm  flex justify-center text-green-500 border-l hover:bg-slate-200 h-full items-center  transition-all duration-150"
@@ -104,7 +114,7 @@ function Cart() {
                     <FaPlus />
                   </div>
                 </div>
-                <div className="text-center col-span-2">
+                <div className="text-center hidden md:block md:col-span-2">
                   <span className="font-bold">
                     Total: {(product.price * count).toFixed(2)}$
                   </span>

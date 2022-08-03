@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Address() {
+  const {user:{user}}=useSelector(last=>last)
   const [inputs, setInputs] = useState({
     address: { value: "", validate: false, start: false },
     city: { value: "", validate: false, start: false },
@@ -23,6 +25,20 @@ function Address() {
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     },
   });
+  useEffect(() => {
+    if (localStorage.getItem("address")) {
+      const addressLs = JSON.parse(localStorage.getItem("address"));
+      setInputs((last) => {
+        return {
+          ...last,
+          address: { start:true,validate:true, value: addressLs.address },
+          city: { start:true,validate:true, value: addressLs.city },
+          postalCode: { start:true,validate:true, value: addressLs.postalCode },
+          phone: { start:true,validate:true, value: addressLs.phone },
+        };
+      });
+    }
+  }, []);
 
   const checkValidate = () => {
     if (
@@ -54,6 +70,9 @@ function Address() {
 
   const saveAddressToLS = () => {
     if (checkValidate()) {
+      if (localStorage.getItem("address")) {
+        localStorage.removeItem("address");
+      }
       localStorage.setItem(
         "address",
         JSON.stringify({
@@ -72,7 +91,7 @@ function Address() {
   };
 
   switch (true) {
-    case localStorage.getItem("address"):
+    case Boolean(!Object.keys(user).length):
       Toast.fire({
         icon: "success",
         title: `Address exists`,
@@ -101,7 +120,6 @@ function Address() {
               {/* Address */}
               <div className="mb-3">
                 <input
-                  autoFocus
                   type="text"
                   className={
                     !address.validate && address.start
@@ -213,7 +231,7 @@ function Address() {
                     let value = e.target.value;
 
                     setInputs((last) => {
-                      return value.trim().length
+                      return /^[1-9][0-9]{9}$/.test(value)
                         ? {
                             ...last,
                             postalCode: {
@@ -235,7 +253,7 @@ function Address() {
                 />
                 {postalCode.start && !postalCode.validate && (
                   <p className="text-xs px-3 pt-1 text-red-500">
-                    The postalCode field must be filled
+                    The postalCode field must be number(10character) and Should not begin with 0  example 1234567890
                   </p>
                 )}
               </div>
@@ -260,7 +278,7 @@ function Address() {
                     let value = e.target.value;
 
                     setInputs((last) => {
-                      return value.trim().length
+                      return  /^[0][9][0-9]{9}$/.test(value)
                         ? {
                             ...last,
                             phone: {
@@ -282,7 +300,7 @@ function Address() {
                 />
                 {phone.start && !phone.validate && (
                   <p className="text-xs px-3 pt-1 text-red-500">
-                    The phone field must be filled
+                    The phone field must be number(11character) and started by 09  example 09123456789
                   </p>
                 )}
               </div>

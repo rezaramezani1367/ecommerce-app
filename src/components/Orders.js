@@ -64,7 +64,7 @@ function Orders() {
     default:
       return (
         <div className="my-6">
-          <div className="grid grid-cols-10 text-center border bg-slate-200 shadow font-bold py-2 mb-2 gap-1">
+          <div className="grid grid-cols-10 text-center border bg-slate-200 shadow  py-2 mb-2 gap-1  text-xs font-normal md:text-base md:font-bold">
             <div>#</div>
             <div className="col-span-2">Count Items Order</div>
             <div className="col-span-2">total Price</div>
@@ -72,10 +72,10 @@ function Orders() {
             <div className="col-span-2">Is Delivered</div>
             <div className="col-span-2">Create at</div>
           </div>
-          {Object.values(orders).map((item, index) => {
+          {Object.values(orders).sort((x,y)=>Date.parse(y.createdAt)-Date.parse(x.createdAt)).map((item, index) => {
             return (
               <div
-                className="grid grid-cols-10 text-center border bg-slate-50 shadow font-bold py-2 mb-2 hover:cursor-pointer hover:bg-slate-300 transition-all duration-200 gap-1"
+                className="grid grid-cols-10 text-center border bg-slate-50 shadow py-2 mb-2 hover:cursor-pointer hover:bg-slate-300 transition-all duration-200 gap-1  text-xs font-normal md:text-base md:font-bold"
                 key={index}
                 onClick={()=>{
                   navigate(`/orders/${item._id}`)

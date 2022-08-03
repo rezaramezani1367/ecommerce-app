@@ -5,6 +5,7 @@ import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Home from "./components/Home";
 import Login from "./components/Login";
+import NotFound from "./components/NotFound";
 import Order from "./components/Order";
 import Orders from "./components/Orders";
 import Product from "./components/Product";
@@ -28,6 +29,7 @@ function Routers() {
         <Route index element={<Orders />} />
         <Route path=":id" element={<Order />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

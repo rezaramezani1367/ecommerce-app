@@ -51,7 +51,7 @@ function Home() {
                   </div>
                 </div>
                 <div className="py-2 px-6">
-                  <p className="font-bold">{item.name}</p>
+                  <p className="font-bold line-clamp-1">{item.name}</p>
                   <hr className="my-2" />
                   <p>
                     <span className="font-bold">Price :</span>

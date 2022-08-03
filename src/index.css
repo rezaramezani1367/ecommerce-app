@@ -10,6 +10,11 @@
    text-white hover:shadow-lg transition-all duration-150
    disabled:opacity-50
 }
+.btn-edit {
+  @apply px-4 py-2 border rounded-full bg-slate-50 ring-1  font-bold   hover:bg-slate-200
+    hover:shadow-lg transition-all duration-150
+   disabled:opacity-50
+}
 .input{
   @apply border outline-none w-full rounded-full px-8 py-2
   shadow  transition-all duration-150 focus:border-blue-700 focus:placeholder:text-blue-700 focus:shadow-md
