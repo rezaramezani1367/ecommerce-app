@@ -17,6 +17,7 @@ const initialState = {
     data: [...cartLS],
     loading: false,
     error: "",
+
   },
   user: {
     user: {...userLS},

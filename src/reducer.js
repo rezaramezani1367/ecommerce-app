@@ -64,7 +64,7 @@ export const orders = (
 export const cart = (
   state = {
     loading: false,
-    data:[],
+    data: [],
     error: "",
   },
   { type, payload }

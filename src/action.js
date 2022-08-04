@@ -92,7 +92,6 @@ export const createUser =
     }
   };
 export const exitUser = () => async (dispatch, getState) => {
-  
   dispatch({
     type: successUser,
     payload: {
@@ -143,7 +142,7 @@ export const getProfile = () => async (dispatch, getState) => {
     payload: { ...getState().user, loading: true },
   });
   try {
-    const {token}={...getState().user.user}
+    const { token } = { ...getState().user.user };
     const { data } = await axios.get(`${IpApi}/api/users/profile`, {
       headers: {
         "Content-Type": "application/json",
@@ -171,56 +170,57 @@ export const getProfile = () => async (dispatch, getState) => {
     });
   }
 };
-export const changeProfile =
-(password) => async (dispatch, getState) => {
+export const changeProfile = (password) => async (dispatch, getState) => {
   dispatch({
     type: loadingUser,
     payload: { ...getState().user, loading: true },
   });
   try {
-      const {user:{name,email}}={...getState().user};
-      // چون توکن ندارد از لوکال استورچ مجبوریم توکن رو بگیریم
-      const {token}={...JSON.parse(localStorage.getItem("user"))};
-      console.log("first",token)
-      console.log(getState().user)
-      console.log(name,email,token)
-      const { data } = await axios.put(
-        `${IpApi}/api/users/profile `,
-        {
-          name,
-          email,
-          password,
+    const {
+      user: { name, email },
+    } = { ...getState().user };
+    // چون توکن ندارد از لوکال استورچ مجبوریم توکن رو بگیریم
+    const { token } = { ...JSON.parse(localStorage.getItem("user")) };
+    console.log("first", token);
+    console.log(getState().user);
+    console.log(name, email, token);
+    const { data } = await axios.put(
+      `${IpApi}/api/users/profile `,
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      }
+    );
 
-      dispatch({
-        type: successUser,
-        payload: {
-          error: "",
-          loading: false,
-          user: { ...data },
-        },
-      });
-      localStorage.setItem("user", JSON.stringify(data));
-    } catch ( error ) {
-      const errors = error.response.data ? error.response.data : error;
-      console.log(error)
-      dispatch({
-        type: errorUser,
-        payload: {
-          error: errors.message,
-          loading: false,
-          user: {},
-        },
-      });
-    }
-  };
+    dispatch({
+      type: successUser,
+      payload: {
+        error: "",
+        loading: false,
+        user: { ...data },
+      },
+    });
+    localStorage.setItem("user", JSON.stringify(data));
+  } catch (error) {
+    const errors = error.response.data ? error.response.data : error;
+    console.log(error);
+    dispatch({
+      type: errorUser,
+      payload: {
+        error: errors.message,
+        loading: false,
+        user: {},
+      },
+    });
+  }
+};
 export const setOrders = (orders, token) => async (dispatch, getState) => {
   console.log(orders);
   dispatch({
@@ -257,9 +257,8 @@ export const setOrders = (orders, token) => async (dispatch, getState) => {
         loading: false,
         data: [],
       },
-    })
+    });
     localStorage.removeItem("cart");
-
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
 
@@ -280,7 +279,6 @@ export const getMyOrders = (token) => async (dispatch, getState) => {
     payload: { ...getState().orders, loading: true },
   });
   try {
-    
     const { data } = await axios.get(`${IpApi}/api/orders/myorders`, {
       headers: {
         "Content-Type": "application/json",
@@ -444,56 +442,52 @@ export const removeFromcartLS = (index) => (dispatch, getState) => {
     });
   }
 };
-export const addProductTocartLS = (productItem) => (dispatch, getState) => {
-  dispatch({
-    type: loadingCart,
-    payload: { ...getState().cart, loading: true },
-  });
-  try {
-    let { data } = { ...getState().cart };
-
-    let duplicateIndex = -1;
-    data.forEach((item, index) => {
-      // console.log(item.product._id, productItem._id);
-      if (item.product._id == productItem._id) {
-        console.log("item");
-        duplicateIndex = index;
-
+export const addProductTocartLS =
+  (productItem, indexCart) => (dispatch, getState) => {
+    dispatch({
+      type: loadingCart,
+      payload: { ...getState().cart, loading: true },
+    });
+    try {
+      // console.log(indexCart);
+      const { data } = { ...getState().cart };
+      if (indexCart > -1) {
+        const item = { ...data[indexCart] };
         item.count =
           item.count < item.product.countInStock
             ? item.count + 1
             : item.product.countInStock;
-        data[index] = { ...item };
-        console.log(data);
+        data[indexCart] = { ...item };
+        dispatch({
+          type: successCart,
+          payload: {
+            error: "",
+            loading: false,
+            data: [...data],
+          },
+        });
+        localStorage.setItem("cart", JSON.stringify([...data]));
+      } else if (indexCart === -1) {
+        console.log("first");
+        dispatch({
+          type: successCart,
+          payload: {
+            error: "",
+            loading: false,
+            data: [...data, { product: { ...productItem }, count: 1 }],
+          },
+        });
+        localStorage.setItem("cart", JSON.stringify([...data]));
       }
-    });
-    if (duplicateIndex === -1) {
-      data = [
-        ...getState().cart.data,
-        { product: { ...productItem }, count: 1 },
-      ];
+    } catch (error) {
+      dispatch({
+        type: errorCart,
+        payload: {
+          error: error.message,
+          loading: false,
+
+          data: {},
+        },
+      });
     }
-
-    dispatch({
-      type: successCart,
-      payload: {
-        error: "",
-        loading: false,
-        data: [...data],
-      },
-    });
-
-    localStorage.setItem("cart", JSON.stringify([...data]));
-
-    // console.log(getState().cart);
-  } catch (error) {
-    dispatch({
-      type: errorCart,
-      payload: {
-        error: error.message,
-        loading: false,
-        data: {},
-      },
-    });
-  }
-};
+  };
