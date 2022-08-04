@@ -1,23 +1,71 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./Loading";
 import { addProductTocartLS, getProduct } from "../action";
-import { FaEye, FaStar } from "react-icons/fa";
+import { FaEye, FaMinus, FaPlus, FaRegTrashAlt, FaStar } from "react-icons/fa";
 import Error from "./Error";
-
+import Swal from "sweetalert2";
+import { AddTocartLS, minusTocartLS, removeFromcartLS } from "../action";
 function Product() {
-  const { products:{data, loading, error }} = useSelector((state) => state);
+  const {
+    products: { data, loading, error },
+    cart,
+  } = useSelector((state) => state);
+  const [indexCart, setIndexCart] = useState(-1);
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
   useEffect(() => {
     dispatch(getProduct(id));
     document.title = `Product `;
-  }, []);
+    // index cart
+    // const productItem = [...data][0];
 
+    cart.data.forEach((item, index) => {
+      if (item.product._id == id) {
+        setIndexCart(index);
+      }
+    });
+  }, []);
+  console.log(indexCart);
+  const addCounter = (index) => {
+    dispatch(AddTocartLS(index));
+    if (cart.data[index].count === cart.data[index].product.countInStock) {
+      Toast.fire({
+        icon: "error",
+        title: `${cart.data[index].product.name} is max count`,
+      });
+    }
+  };
+  const minusCounter = (index) => {
+    dispatch(minusTocartLS(index));
+    if (cart.data[index].count === 0) {
+      setIndexCart(-1);
+      Toast.fire({
+        icon: "error",
+        title: `${cart.data[index].product.name} is deleted from cart`,
+      });
+      dispatch(removeFromcartLS(index));
+    }
+  };
   const CartAddToStorage = () => {
-    dispatch(addProductTocartLS([...data][0]));
+    console.log("cart");
+    if (indexCart === -1) {
+      setIndexCart(cart.data.length);
+    }
+    dispatch(addProductTocartLS([...data][0], indexCart));
   };
   switch (true) {
     case loading:
@@ -92,15 +140,58 @@ function Product() {
               </li>
               <li className="mt-5">
                 {data[0]?.countInStock ? (
-                  <button
-                    className="btn"
-                    onClick={() => {
-                      CartAddToStorage();
-                      navigate(`/cart`);
-                    }}
-                  >
-                    Add To Card
-                  </button>
+                  <div className="flex gap-4">
+                    {cart.data[indexCart]?.count ? (
+                      <>
+                        <div className="border w-2/3 sm:w-1/3 md:w-1/2  grid grid-cols-4  items-center  justify-center shadow-lg col-span-4 md:col-span-2 text-center h-full">
+                          <div
+                            className="cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
+                            onClick={() => minusCounter(indexCart)}
+                          >
+                            {console.log(cart)}
+                            {cart.data[indexCart]?.count === 1 ? (
+                              <FaRegTrashAlt />
+                            ) : (
+                              <FaMinus />
+                            )}
+                          </div>
+                          <div className="font-bold text-xl col-span-2 h-full flex items-center justify-center gap-1">
+                            <span>{cart.data[indexCart]?.count}</span>
+                            {cart.data[indexCart]?.count ===
+                              data[0].countInStock && (
+                              <span className="text-xs text-red-500">
+                                | max
+                              </span>
+                            )}
+                          </div>
+                          <div
+                            className=" cursor-pointer text-sm  flex justify-center text-green-500 border-l hover:bg-slate-200 h-full items-center  transition-all duration-150"
+                            onClick={() => addCounter(indexCart)}
+                          >
+                            <FaPlus />
+                          </div>
+                        </div>
+                        <div
+                          className="btn-cart"
+                          onClick={() => {
+                            navigate(`/cart`);
+                          }}
+                        >
+                          View Cart
+                        </div>
+                      </>
+                    ) : (
+                      <button
+                        className="btn"
+                        onClick={() => {
+                          CartAddToStorage();
+                          // navigate(`/cart`);
+                        }}
+                      >
+                        Add To Card
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <button className="btn">Notify when available</button>
                 )}
