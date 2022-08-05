@@ -5,6 +5,7 @@ import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaStar } from "react-icons/fa";
 import Error from "./Error";
+import Filter from "./Filter";
 
 function Home() {
   const { products:{data, loading, error} } = useSelector((state) => state);
@@ -23,7 +24,9 @@ function Home() {
     default:
       
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-6 gap-3">
+        // <div className="grid grid-cols-4 gap-1 mt-3">
+        //   <div className="bg-slate-50 border"> <Filter /> </div>
+          <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3">
           {data.map((item, index) => {
             return (
               <div
@@ -64,6 +67,7 @@ function Home() {
             );
           })}
         </div>
+        // </div>
       );
   }
 }

@@ -9,6 +9,7 @@ function Signup() {
   const {
     user: { user, loading, error },
   } = useSelector((state) => state);
+  const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     name: { value: "", validate: false, start: false },
@@ -62,13 +63,13 @@ function Signup() {
     document.title = "signup";
   }, []);
   useEffect(() => {
-    if (error.length) {
+    if (status && error.length) {
       Toast.fire({
         icon: "error",
         title: error,
       });
     }
-    if (Object.keys(user).length) {
+    if (status && Object.keys(user).length) {
       Toast.fire({
         icon: "success",
         title: `${name.value} created successfully`,
@@ -80,6 +81,7 @@ function Signup() {
   const newUser = () => {
     if (checkValidate()) {
       dispatch(createUser(name.value, email.value, password.value));
+      setStatus(true);
     }
   };
   switch (true) {

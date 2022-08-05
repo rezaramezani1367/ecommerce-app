@@ -16,7 +16,7 @@
    disabled:opacity-50
 }
 .btn-cart {
-  @apply px-4 py-0.5 border rounded-full bg-slate-50 ring-1  font-bold   hover:bg-slate-200
+  @apply px-4 py-0.5 border rounded-full bg-slate-50 ring-1 text-sm  md:font-bold   hover:bg-slate-200
     hover:shadow-lg transition-all duration-150 cursor-pointer
    disabled:opacity-50
 }

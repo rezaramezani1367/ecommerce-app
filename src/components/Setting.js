@@ -6,9 +6,11 @@ import { changeProfile, getProfile } from "../action";
 import Swal from "sweetalert2";
 
 function Setting() {
-  const { user:{user, loading, error} } = useSelector((state) => state);
+  const {
+    user: { user, loading, error },
+  } = useSelector((state) => state);
   const [status, setStatus] = useState(false);
-  
+
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     oldPassword: { value: "", validate: false, start: false },
@@ -17,7 +19,7 @@ function Setting() {
   });
   const { oldPassword, newPassword, repeatPass } = { ...inputs };
   const navigate = useNavigate();
-
+// console.log(user)
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -37,6 +39,7 @@ function Setting() {
     ) {
       setInputs((last) => {
         let help = { ...last };
+
         if (!oldPassword.validate) {
           help.oldPassword = { ...help.oldPassword, start: true };
         }
@@ -55,8 +58,7 @@ function Setting() {
   };
   useEffect(() => {
     document.title = `Setting`;
-  }, [])
-  
+  }, []);
 
   useEffect(() => {
     if (status && error.length) {
@@ -79,7 +81,6 @@ function Setting() {
     if (checkValidate()) {
       dispatch(getProfile());
       setStatus(true);
-
     }
   };
   switch (true) {
@@ -130,11 +131,12 @@ function Setting() {
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
+                    // console.log(value,'userpass:'+ user.password)
 
                     setInputs((last) => {
                       return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
                         value
-                      )
+                      ) && value === user.password
                         ? {
                             ...last,
                             oldPassword: {
@@ -156,7 +158,7 @@ function Setting() {
                 />
                 {!oldPassword.validate && oldPassword.start && (
                   <p className="text-xs px-3 pt-1 text-red-500">
-                    The old password field is invalid
+                    The old password field is invalid or wrong
                   </p>
                 )}
               </div>

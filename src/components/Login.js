@@ -9,6 +9,7 @@ function Login() {
   const {
     user: { user, loading, error },
   } = useSelector((state) => state);
+  const [status, setStatus] = useState(false);
   const dispatch = useDispatch();
   const { pathname } = useLocation();
 
@@ -51,13 +52,13 @@ function Login() {
     document.title = "login";
   }, []);
   useEffect(() => {
-    if (error.length) {
+    if (status &&error.length) {
       Toast.fire({
         icon: "error",
         title: error,
       });
     }
-    if (Object.keys(user).length) {
+    if (status &&Object.keys(user).length) {
       Toast.fire({
         icon: "success",
         title: `${user.name} login successfully`,
@@ -69,6 +70,7 @@ function Login() {
   const login = () => {
     if (checkValidate()) {
       dispatch(loginUser(email.value, password.value));
+      setStatus(true);
     }
   };
   switch (true) {

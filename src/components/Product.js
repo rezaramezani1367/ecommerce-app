@@ -39,7 +39,6 @@ function Product() {
       }
     });
   }, []);
-  console.log(indexCart);
   const addCounter = (index) => {
     dispatch(AddTocartLS(index));
     if (cart.data[index].count === cart.data[index].product.countInStock) {
@@ -61,7 +60,6 @@ function Product() {
     }
   };
   const CartAddToStorage = () => {
-    console.log("cart");
     if (indexCart === -1) {
       setIndexCart(cart.data.length);
     }
@@ -148,7 +146,6 @@ function Product() {
                             className="cursor-pointer text-sm text-red-500 flex justify-center border-r h-full items-center hover:bg-slate-200 transition-all duration-150"
                             onClick={() => minusCounter(indexCart)}
                           >
-                            {console.log(cart)}
                             {cart.data[indexCart]?.count === 1 ? (
                               <FaRegTrashAlt />
                             ) : (

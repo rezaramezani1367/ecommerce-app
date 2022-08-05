@@ -77,9 +77,9 @@ export const createUser =
           user: { ...data },
         },
       });
-      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("user", JSON.stringify({ ...data, password }));
     } catch (error) {
-      const errors = error.data ? error.data : error;
+      const errors = error.response.data ? error.response.data : error;
 
       dispatch({
         type: errorUser,
@@ -118,13 +118,13 @@ export const loginUser = (email, password) => async (dispatch, getState) => {
       payload: {
         error: "",
         loading: false,
-        user: { ...data },
+        user: { ...data, password },
       },
     });
-    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify({ ...data, password }));
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
-    console.log(errors);
+    
 
     dispatch({
       type: errorUser,
@@ -142,7 +142,7 @@ export const getProfile = () => async (dispatch, getState) => {
     payload: { ...getState().user, loading: true },
   });
   try {
-    const { token } = { ...getState().user.user };
+    const { token, password } = { ...getState().user.user };
     const { data } = await axios.get(`${IpApi}/api/users/profile`, {
       headers: {
         "Content-Type": "application/json",
@@ -155,9 +155,10 @@ export const getProfile = () => async (dispatch, getState) => {
       payload: {
         error: "",
         loading: false,
-        user: { ...data },
+        user: { ...data, password, token },
       },
     });
+    console.log(getState().user)
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
     dispatch({
@@ -168,6 +169,8 @@ export const getProfile = () => async (dispatch, getState) => {
         user: {},
       },
     });
+    console.log(getState().user)
+
   }
 };
 export const changeProfile = (password) => async (dispatch, getState) => {
@@ -177,13 +180,9 @@ export const changeProfile = (password) => async (dispatch, getState) => {
   });
   try {
     const {
-      user: { name, email },
+      user: { name, email, token },
     } = { ...getState().user };
-    // چون توکن ندارد از لوکال استورچ مجبوریم توکن رو بگیریم
-    const { token } = { ...JSON.parse(localStorage.getItem("user")) };
-    console.log("first", token);
-    console.log(getState().user);
-    console.log(name, email, token);
+
     const { data } = await axios.put(
       `${IpApi}/api/users/profile `,
       {
@@ -204,13 +203,13 @@ export const changeProfile = (password) => async (dispatch, getState) => {
       payload: {
         error: "",
         loading: false,
-        user: { ...data },
+        user: { ...data, password },
       },
     });
-    localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify({ ...data, password }));
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
-    console.log(error);
+    
     dispatch({
       type: errorUser,
       payload: {
@@ -222,7 +221,7 @@ export const changeProfile = (password) => async (dispatch, getState) => {
   }
 };
 export const setOrders = (orders, token) => async (dispatch, getState) => {
-  console.log(orders);
+  
   dispatch({
     type: loadingOrders,
     payload: { ...getState().orders, loading: true },
@@ -270,7 +269,7 @@ export const setOrders = (orders, token) => async (dispatch, getState) => {
         orders: {},
       },
     });
-    console.log(getState().orders);
+   
   }
 };
 export const getMyOrders = (token) => async (dispatch, getState) => {
@@ -294,13 +293,13 @@ export const getMyOrders = (token) => async (dispatch, getState) => {
         orders: { ...data },
       },
     });
-    // console.log(getState());
+    
   } catch (error) {
-    console.log(error);
+    const errors = error.response.data ? error.response.data : error;
     dispatch({
       type: errorOrders,
       payload: {
-        error: error.message,
+        error: errors.message,
         loading: false,
         orders: {},
       },
@@ -328,7 +327,7 @@ export const getDetailsOrder = (id, token) => async (dispatch, getState) => {
         orders: { ...data },
       },
     });
-    console.log(getState().orders);
+    
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
 
@@ -366,12 +365,13 @@ export const AddTocartLS = (index) => (dispatch, getState) => {
       },
     });
     localStorage.setItem("cart", JSON.stringify([...data]));
-    console.log(getState().cart);
+   
   } catch (error) {
+    const errors = error.response.data ? error.response.data : error;
     dispatch({
       type: errorCart,
       payload: {
-        error: error.message,
+        error: errors.message,
         loading: false,
         data: {},
       },
@@ -398,12 +398,13 @@ export const minusTocartLS = (index) => (dispatch, getState) => {
       },
     });
     localStorage.setItem("cart", JSON.stringify([...data]));
-    console.log(getState().cart);
+    
   } catch (error) {
+    const errors = error.response.data ? error.response.data : error;
     dispatch({
       type: errorCart,
       payload: {
-        error: error.message,
+        error: errors.message,
         loading: false,
         data: {},
       },
@@ -430,12 +431,13 @@ export const removeFromcartLS = (index) => (dispatch, getState) => {
     data.length
       ? localStorage.setItem("cart", JSON.stringify([...data]))
       : localStorage.removeItem("cart");
-    console.log(getState().cart);
+    
   } catch (error) {
+    const errors = error.response.data ? error.response.data : error;
     dispatch({
       type: errorCart,
       payload: {
-        error: error.message,
+        error: errors.message,
         loading: false,
         data: {},
       },
@@ -449,7 +451,7 @@ export const addProductTocartLS =
       payload: { ...getState().cart, loading: true },
     });
     try {
-      // console.log(indexCart);
+      
       const { data } = { ...getState().cart };
       if (indexCart > -1) {
         const item = { ...data[indexCart] };
@@ -468,7 +470,7 @@ export const addProductTocartLS =
         });
         localStorage.setItem("cart", JSON.stringify([...data]));
       } else if (indexCart === -1) {
-        console.log("first");
+        
         dispatch({
           type: successCart,
           payload: {
@@ -477,13 +479,17 @@ export const addProductTocartLS =
             data: [...data, { product: { ...productItem }, count: 1 }],
           },
         });
-        localStorage.setItem("cart", JSON.stringify([...data]));
+        localStorage.setItem(
+          "cart",
+          JSON.stringify([...data, { product: { ...productItem }, count: 1 }])
+        );
       }
     } catch (error) {
+      const errors = error.response.data ? error.response.data : error;
       dispatch({
         type: errorCart,
         payload: {
-          error: error.message,
+          error: errors.message,
           loading: false,
 
           data: {},

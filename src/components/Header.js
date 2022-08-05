@@ -3,12 +3,11 @@ import { FaShoppingCart, FaUser } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { exitUser } from "../action";
-
+import { exitUser, getProfile } from "../action";
 
 function Header() {
   const {
-    user: { user },
+    user: { error, user },
     cart: { data },
   } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -34,11 +33,30 @@ function Header() {
     });
     setCountCart(totalCount);
   }, [data]);
-  useEffect(() => {
-    setFlagUser(false)
-  }, []);
 
-  
+  useEffect(() => {
+    setFlagUser(false);
+    // validation token
+    console.log(user);
+    if(Object.keys(user).length){
+
+      dispatch(getProfile());
+    }
+    
+  }, []);
+  useEffect(() => {
+    // validation token when faild
+    if (error === "Not authorized, token failed") {
+     Toast.fire({
+       icon: "error",
+       title: error,
+     });
+     dispatch(exitUser());
+     navigate("/login");
+   }
+    
+   
+  }, [user]);
 
   return (
     <div className="border-b shadow py-2.5">
@@ -60,17 +78,29 @@ function Header() {
                     <FaUser />
                   </div>
                   {flagUser && (
-                    <ul id="someElementID" className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md" >
-                      
+                    <ul
+                      id="someElementID"
+                      className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md"
+                    >
                       <li className=" text-green-700 text-base p-2 bg-slate-200">
-                       Hi {user.name}
+                        Hi {user.name}
                       </li>
                       <hr />
-                      
-                      <li className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b" onClick={()=>{setFlagUser(false)}}>
+
+                      <li
+                        className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b"
+                        onClick={() => {
+                          setFlagUser(false);
+                        }}
+                      >
                         <Link to="/setting">Setting</Link>
                       </li>
-                      <li className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b" onClick={()=>{setFlagUser(false)}}>
+                      <li
+                        className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b"
+                        onClick={() => {
+                          setFlagUser(false);
+                        }}
+                      >
                         <Link to="/orders">Orders</Link>
                       </li>
                       <li
@@ -81,7 +111,7 @@ function Header() {
                             icon: "success",
                             title: `User loged out`,
                           });
-                          setFlagUser(false)
+                          setFlagUser(false);
                           navigate("/");
                         }}
                       >
