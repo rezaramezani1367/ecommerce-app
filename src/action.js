@@ -158,7 +158,7 @@ export const getProfile = () => async (dispatch, getState) => {
         user: { ...data, password, token },
       },
     });
-    console.log(getState().user)
+   
   } catch (error) {
     const errors = error.response.data ? error.response.data : error;
     dispatch({
@@ -169,7 +169,7 @@ export const getProfile = () => async (dispatch, getState) => {
         user: {},
       },
     });
-    console.log(getState().user)
+   
 
   }
 };

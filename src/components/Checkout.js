@@ -48,8 +48,6 @@ function Checkout() {
       });
     }
     if (status && Object.keys(orders).length) {
-      console.log("status", status);
-      console.log("orders", Boolean(Object.keys(orders).length));
       Toast.fire({
         icon: "success",
         title: "order submit successfully",

@@ -19,7 +19,7 @@ function Setting() {
   });
   const { oldPassword, newPassword, repeatPass } = { ...inputs };
   const navigate = useNavigate();
-// console.log(user)
+  // console.log(user)
   const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -83,6 +83,94 @@ function Setting() {
       setStatus(true);
     }
   };
+  const oldPasswordValidate = (value) => {
+    setInputs((last) => {
+      return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+        value
+      ) && value === user.password
+        ? {
+            ...last,
+            oldPassword: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            oldPassword: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const newPasswordValidate = (value) => {
+    setInputs((last) => {
+      if (
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(value)
+      ) {
+        return repeatPass.value === value
+          ? {
+              ...last,
+              newPassword: {
+                start: true,
+                value: value,
+                validate: true,
+              },
+              repeatPass: {
+                ...repeatPass,
+                start: true,
+                validate: true,
+              },
+            }
+          : {
+              ...last,
+              newPassword: {
+                start: true,
+                value: value,
+                validate: true,
+              },
+              repeatPass: {
+                ...repeatPass,
+                start: true,
+                validate: false,
+              },
+            };
+      } else {
+        return {
+          ...last,
+          newPassword: {
+            start: true,
+            value: value,
+            validate: false,
+          },
+        };
+      }
+    });
+  };
+  const repeatNewPasswordValidate = (value) => {
+    setInputs((last) => {
+      return value === newPassword.value
+        ? {
+            ...last,
+            repeatPass: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            repeatPass: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
   switch (true) {
     case Boolean(!Object.keys(user).length):
       Toast.fire({
@@ -112,6 +200,7 @@ function Setting() {
               {/* old password */}
               <div className="mb-3">
                 <input
+                  autoFocus
                   type="password"
                   className={
                     !oldPassword.validate && oldPassword.start
@@ -122,38 +211,11 @@ function Setting() {
                   value={oldPassword.name}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        oldPassword: { ...oldPassword, value: value },
-                      };
-                    });
+                    oldPasswordValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-                    // console.log(value,'userpass:'+ user.password)
-
-                    setInputs((last) => {
-                      return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                        value
-                      ) && value === user.password
-                        ? {
-                            ...last,
-                            oldPassword: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            oldPassword: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    oldPasswordValidate(value);
                   }}
                 />
                 {!oldPassword.validate && oldPassword.start && (
@@ -175,60 +237,11 @@ function Setting() {
                   value={newPassword.name}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        newPassword: { ...newPassword, value: value },
-                      };
-                    });
+                    newPasswordValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      if (
-                        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                          value
-                        )
-                      ) {
-                        return repeatPass.value === value
-                          ? {
-                              ...last,
-                              newPassword: {
-                                start: true,
-                                value: value,
-                                validate: true,
-                              },
-                              repeatPass: {
-                                ...repeatPass,
-                                start: true,
-                                validate: true,
-                              },
-                            }
-                          : {
-                              ...last,
-                              newPassword: {
-                                start: true,
-                                value: value,
-                                validate: true,
-                              },
-                              repeatPass: {
-                                ...repeatPass,
-                                start: true,
-                                validate: false,
-                              },
-                            };
-                      } else {
-                        return {
-                          ...last,
-                          newPassword: {
-                            start: true,
-                            value: value,
-                            validate: false,
-                          },
-                        };
-                      }
-                    });
+                    newPasswordValidate(value);
                   }}
                 />
                 {!newPassword.validate && newPassword.start && (
@@ -251,35 +264,11 @@ function Setting() {
                   value={inputs.repeatPass[0]}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        repeatPass: { ...repeatPass, value: value },
-                      };
-                    });
+                    repeatNewPasswordValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return value === newPassword.value
-                        ? {
-                            ...last,
-                            repeatPass: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            repeatPass: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    repeatNewPasswordValidate(value);
                   }}
                 />
                 {!repeatPass.validate && repeatPass.start && (

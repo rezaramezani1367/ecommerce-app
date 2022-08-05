@@ -37,7 +37,7 @@ function Header() {
   useEffect(() => {
     setFlagUser(false);
     // validation token
-    console.log(user);
+  
     if(Object.keys(user).length){
 
       dispatch(getProfile());
@@ -49,7 +49,7 @@ function Header() {
     if (error === "Not authorized, token failed") {
      Toast.fire({
        icon: "error",
-       title: error,
+       title: 'Please login again',
      });
      dispatch(exitUser());
      navigate("/login");

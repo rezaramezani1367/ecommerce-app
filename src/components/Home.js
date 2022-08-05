@@ -26,7 +26,7 @@ function Home() {
       return (
         // <div className="grid grid-cols-4 gap-1 mt-3">
         //   <div className="bg-slate-50 border"> <Filter /> </div>
-          <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3">
+          <div className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 my-6 gap-3">
           {data.map((item, index) => {
             return (
               <div

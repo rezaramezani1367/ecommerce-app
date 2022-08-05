@@ -52,13 +52,13 @@ function Login() {
     document.title = "login";
   }, []);
   useEffect(() => {
-    if (status &&error.length) {
+    if (status && error.length) {
       Toast.fire({
         icon: "error",
         title: error,
       });
     }
-    if (status &&Object.keys(user).length) {
+    if (status && Object.keys(user).length) {
       Toast.fire({
         icon: "success",
         title: `${user.name} login successfully`,
@@ -73,6 +73,52 @@ function Login() {
       setStatus(true);
     }
   };
+
+  const emailValidate = (value) => {
+    setInputs((last) => {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? {
+            ...last,
+            email: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            email: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const passwordValidate = (value) => {
+    setInputs((last) => {
+      return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+        value
+      )
+        ? {
+            ...last,
+            password: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            password: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+
   switch (true) {
     case Boolean(Object.keys(user).length):
       Toast.fire({
@@ -132,31 +178,11 @@ function Login() {
                   value={email.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, email: { ...email, value: value } };
-                    });
+                    emailValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                        ? {
-                            ...last,
-                            email: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            email: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    emailValidate(value);
                   }}
                 />
                 {!email.validate && email.start && (
@@ -179,37 +205,11 @@ function Login() {
                   value={password.name}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        password: { ...password, value: value },
-                      };
-                    });
+                   passwordValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                        value
-                      )
-                        ? {
-                            ...last,
-                            password: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            password: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    passwordValidate(value);
                   }}
                 />
                 {!password.validate && password.start && (

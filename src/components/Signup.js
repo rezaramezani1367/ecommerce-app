@@ -84,6 +84,112 @@ function Signup() {
       setStatus(true);
     }
   };
+
+  const nameValidate = (value) => {
+    setInputs((last) => {
+      return value.trim().length
+        ? {
+            ...last,
+            name: { start: true, value: value, validate: true },
+          }
+        : {
+            ...last,
+            name: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const emailValidate = (value) => {
+    setInputs((last) => {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? {
+            ...last,
+            email: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            email: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const passwordValidate = (value) => {
+    setInputs((last) => {
+      if (
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
+          value
+        )
+      ) {
+        return repeatPass.value === value
+          ? {
+              ...last,
+              password: {
+                start: true,
+                value: value,
+                validate: true,
+              },
+              repeatPass: {
+                ...repeatPass,
+                start: true,
+                validate: true,
+              },
+            }
+          : {
+              ...last,
+              password: {
+                start: true,
+                value: value,
+                validate: true,
+              },
+              repeatPass: {
+                ...repeatPass,
+                start: true,
+                validate: false,
+              },
+            };
+      } else {
+        return {
+          ...last,
+          password: {
+            start: true,
+            value: value,
+            validate: false,
+          },
+        };
+      }
+    });
+  };
+  const repeatPasswordValidate = (value) => {
+    setInputs((last) => {
+      return value === password.value
+        ? {
+            ...last,
+            repeatPass: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            repeatPass: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
   switch (true) {
     case Boolean(Object.keys(user).length):
       Toast.fire({
@@ -142,28 +248,11 @@ function Signup() {
                   value={name.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, name: { ...name, value: value } };
-                    });
+                    nameValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return value.trim().length
-                        ? {
-                            ...last,
-                            name: { start: true, value: value, validate: true },
-                          }
-                        : {
-                            ...last,
-                            name: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    nameValidate(value);
                   }}
                 />
                 {name.start && !name.validate && (
@@ -185,31 +274,11 @@ function Signup() {
                   value={email.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, email: { ...email, value: value } };
-                    });
+                    emailValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-                        ? {
-                            ...last,
-                            email: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            email: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    emailValidate(value);
                   }}
                 />
                 {!email.validate && email.start && (
@@ -232,60 +301,13 @@ function Signup() {
                   value={password.name}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        password: { ...password, value: value },
-                      };
-                    });
+                    passwordValidate(value)
+                    
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      if (
-                        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/.test(
-                          value
-                        )
-                      ) {
-                        return repeatPass.value === value
-                          ? {
-                              ...last,
-                              password: {
-                                start: true,
-                                value: value,
-                                validate: true,
-                              },
-                              repeatPass: {
-                                ...repeatPass,
-                                start: true,
-                                validate: true,
-                              },
-                            }
-                          : {
-                              ...last,
-                              password: {
-                                start: true,
-                                value: value,
-                                validate: true,
-                              },
-                              repeatPass: {
-                                ...repeatPass,
-                                start: true,
-                                validate: false,
-                              },
-                            };
-                      } else {
-                        return {
-                          ...last,
-                          password: {
-                            start: true,
-                            value: value,
-                            validate: false,
-                          },
-                        };
-                      }
-                    });
+                    passwordValidate(value)
+                    
                   }}
                 />
                 {!password.validate && password.start && (
@@ -310,35 +332,12 @@ function Signup() {
                   value={inputs.repeatPass[0]}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        repeatPass: { ...repeatPass, value: value },
-                      };
-                    });
+                    repeatPasswordValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return value === password.value
-                        ? {
-                            ...last,
-                            repeatPass: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            repeatPass: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    repeatPasswordValidate(value);
+                   
                   }}
                 />
                 {!repeatPass.validate && repeatPass.start && (

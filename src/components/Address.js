@@ -4,7 +4,9 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 function Address() {
-  const {user:{user}}=useSelector(last=>last)
+  const {
+    user: { user },
+  } = useSelector((last) => last);
   const [inputs, setInputs] = useState({
     address: { value: "", validate: false, start: false },
     city: { value: "", validate: false, start: false },
@@ -32,10 +34,14 @@ function Address() {
       setInputs((last) => {
         return {
           ...last,
-          address: { start:true,validate:true, value: addressLs.address },
-          city: { start:true,validate:true, value: addressLs.city },
-          postalCode: { start:true,validate:true, value: addressLs.postalCode },
-          phone: { start:true,validate:true, value: addressLs.phone },
+          address: { start: true, validate: true, value: addressLs.address },
+          city: { start: true, validate: true, value: addressLs.city },
+          postalCode: {
+            start: true,
+            validate: true,
+            value: addressLs.postalCode,
+          },
+          phone: { start: true, validate: true, value: addressLs.phone },
         };
       });
     }
@@ -85,10 +91,91 @@ function Address() {
       );
       Toast.fire({
         icon: "success",
-        title: `Address created successfully`,
+        title: `Address submited successfully`,
       });
       navigate("/checkout");
     }
+  };
+
+  const addressValidate = (value) => {
+    setInputs((last) => {
+      return value.trim().length
+        ? {
+            ...last,
+            address: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            address: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const cityValidate = (value) => {
+    setInputs((last) => {
+      return value.trim().length
+        ? {
+            ...last,
+            city: { start: true, value: value, validate: true },
+          }
+        : {
+            ...last,
+            city: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const postalCodeValidate = (value) => {
+    setInputs((last) => {
+      return /^[1-9][0-9]{9}$/.test(value)
+        ? {
+            ...last,
+            postalCode: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            postalCode: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
+  };
+  const phoneValidate = (value) => {
+    setInputs((last) => {
+      return /^[0][9][0-9]{9}$/.test(value)
+        ? {
+            ...last,
+            phone: {
+              start: true,
+              value: value,
+              validate: true,
+            },
+          }
+        : {
+            ...last,
+            phone: {
+              start: true,
+              value: value,
+              validate: false,
+            },
+          };
+    });
   };
 
   switch (true) {
@@ -131,32 +218,11 @@ function Address() {
                   value={address.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, address: { ...address, value: value } };
-                    });
+                    addressValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return value.trim().length
-                        ? {
-                            ...last,
-                            address: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            address: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    addressValidate(value);
                   }}
                 />
                 {address.start && !address.validate && (
@@ -178,28 +244,11 @@ function Address() {
                   value={city.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, city: { ...city, value: value } };
-                    });
+                    cityValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return value.trim().length
-                        ? {
-                            ...last,
-                            city: { start: true, value: value, validate: true },
-                          }
-                        : {
-                            ...last,
-                            city: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    cityValidate(value);
                   }}
                 />
                 {city.start && !city.validate && (
@@ -221,40 +270,17 @@ function Address() {
                   value={postalCode.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return {
-                        ...last,
-                        postalCode: { ...postalCode, value: value },
-                      };
-                    });
+                    postalCodeValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return /^[1-9][0-9]{9}$/.test(value)
-                        ? {
-                            ...last,
-                            postalCode: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            postalCode: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    postalCodeValidate(value);
                   }}
                 />
                 {postalCode.start && !postalCode.validate && (
                   <p className="text-xs px-3 pt-1 text-red-500">
-                    The postalCode field must be number(10character) and Should not begin with 0  example 1234567890
+                    The postalCode field must be number(10character) and Should
+                    not begin with 0 example 1234567890
                   </p>
                 )}
               </div>
@@ -271,37 +297,17 @@ function Address() {
                   value={phone.value}
                   onChange={(e) => {
                     let value = e.target.value;
-                    setInputs((last) => {
-                      return { ...last, phone: { ...phone, value: value } };
-                    });
+                    phoneValidate(value);
                   }}
                   onBlur={(e) => {
                     let value = e.target.value;
-
-                    setInputs((last) => {
-                      return  /^[0][9][0-9]{9}$/.test(value)
-                        ? {
-                            ...last,
-                            phone: {
-                              start: true,
-                              value: value,
-                              validate: true,
-                            },
-                          }
-                        : {
-                            ...last,
-                            phone: {
-                              start: true,
-                              value: value,
-                              validate: false,
-                            },
-                          };
-                    });
+                    phoneValidate(value);
                   }}
                 />
                 {phone.start && !phone.validate && (
                   <p className="text-xs px-3 pt-1 text-red-500">
-                    The phone field must be number(11character) and started by 09  example 09123456789
+                    The phone field must be number(11character) and started by
+                    09 example 09123456789
                   </p>
                 )}
               </div>
