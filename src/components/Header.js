@@ -4,15 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { exitUser, getProfile } from "../action";
+import useComponentVisible from "./useComponentVisible";
 
 function Header() {
+  const { ref, isComponentVisible, setIsComponentVisible } =
+    useComponentVisible(false);
   const {
     user: { error, user },
     cart: { data },
   } = useSelector((state) => state);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [flagUser, setFlagUser] = useState(false);
   const [countCart, setCountCart] = useState(0);
   const Toast = Swal.mixin({
     toast: true,
@@ -35,27 +37,22 @@ function Header() {
   }, [data]);
 
   useEffect(() => {
-    setFlagUser(false);
     // validation token
-  
-    if(Object.keys(user).length){
 
+    if (Object.keys(user).length) {
       dispatch(getProfile());
     }
-    
   }, []);
   useEffect(() => {
     // validation token when faild
     if (error === "Not authorized, token failed") {
-     Toast.fire({
-       icon: "error",
-       title: 'Please login again',
-     });
-     dispatch(exitUser());
-     navigate("/login");
-   }
-    
-   
+      Toast.fire({
+        icon: "error",
+        title: "Please login again",
+      });
+      dispatch(exitUser());
+      navigate("/login");
+    }
   }, [user]);
 
   return (
@@ -72,13 +69,14 @@ function Header() {
                   <div
                     className="cursor-pointer btn-user"
                     onClick={() => {
-                      setFlagUser(!flagUser);
+                      setIsComponentVisible(true);
                     }}
                   >
                     <FaUser />
                   </div>
-                  {flagUser && (
+                  {isComponentVisible && (
                     <ul
+                      ref={ref}
                       id="someElementID"
                       className="w-28 absolute top-6 right-0 z-50 border border-slate-300 shadow-lg text-sm opacity-95 bg-white  rounded-md"
                     >
@@ -90,7 +88,7 @@ function Header() {
                       <li
                         className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b"
                         onClick={() => {
-                          setFlagUser(false);
+                          setIsComponentVisible(false);
                         }}
                       >
                         <Link to="/setting">Setting</Link>
@@ -98,7 +96,7 @@ function Header() {
                       <li
                         className="cursor-pointer mx-2 hover:text-red-600 transition-all duration-150 px-4 py-1 border-b"
                         onClick={() => {
-                          setFlagUser(false);
+                          setIsComponentVisible(false);
                         }}
                       >
                         <Link to="/orders">Orders</Link>
@@ -111,7 +109,7 @@ function Header() {
                             icon: "success",
                             title: `User loged out`,
                           });
-                          setFlagUser(false);
+                          setIsComponentVisible(false);
                           navigate("/");
                         }}
                       >
